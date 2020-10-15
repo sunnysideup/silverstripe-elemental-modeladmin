@@ -1,0 +1,5 @@
+---
+Name: nswdpc-elemental-modeladmin
+---
+NSWDPC\Elemental\ElementalAdmin:
+  default_sort: 'LastEdited DESC'

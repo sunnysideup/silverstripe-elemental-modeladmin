@@ -41,7 +41,7 @@ class MoveElementExtension extends DataExtension
             $description = $area->OwnerTitleAndDescription();
             $field->setDescription(
                 _t(
-                    __CLASS__ . '.CURRENT_AREA',
+                    'ElementalModelAdmin.CURRENT_AREA',
                     'This element is currently associated with <em>{description}</em>',
                     [
                         'description' => $description

@@ -32,7 +32,7 @@ class MoveElementExtension extends DataExtension
 
         $field = DropdownField::create(
             'ParentID',
-            _t('ElementalModelAdmin.MOVE_TO_AREA', 'Move to another elemental area'),
+            _t('ElementalModelAdmin.MOVE_TO_AREA', 'Move this block'),
             $areas->map('ID', 'OwnerTitleAndDescription')
         )->setEmptyString('');
 
@@ -42,18 +42,15 @@ class MoveElementExtension extends DataExtension
             $field->setDescription(
                 _t(
                     'ElementalModelAdmin.CURRENT_AREA',
-                    'This element is currently associated with <em>{description}</em>',
+                    'Choose a new owner. This block is currently associated with \'<em>{description}</em>\'',
                     [
                         'description' => $description
                     ]
                 )
             );
         }
-
-        $fields->addFieldToTab(
-            'Root.Main',
-            $field
-        );
+        // add to end of Settings tab fields
+        $fields->findorMakeTab('Root.Settings')->unshift($field);
     }
 
     /**

@@ -3,3 +3,12 @@ Name: nswdpc-elemental-modeladmin
 ---
 NSWDPC\Elemental\ElementalAdmin:
   default_sort: 'LastEdited DESC'
+---
+Name: nswdpc-elemental-modeladmin-extensions
+---
+DNADesign\Elemental\Models\BaseElement:
+  extensions:
+    - 'NSWDPC\Elemental\Extensions\ModelAdmin\MoveElementExtension'
+DNADesign\Elemental\Models\ElementalArea:
+  extensions:
+    - 'NSWDPC\Elemental\Extensions\ModelAdmin\ElementalAreaOwnerExtension'

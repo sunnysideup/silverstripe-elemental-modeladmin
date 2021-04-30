@@ -34,6 +34,7 @@ class ElementalAdmin extends ModelAdmin
             //exclude Content Blocks from BaseElement query
             $list = $list->exclude(["ClassName" => ElementContent::class ]);
         }
+        $list = $list->sort("LastEdited DESC");
         return $list;
     }
 
@@ -54,6 +55,7 @@ class ElementalAdmin extends ModelAdmin
                     $display_fields = [
                         'ID' => '#',
                         'Title' => 'Title',
+                        'Parent.OwnerTitleAndDescription' => 'Context',
                         'Type' => 'Type',
                         'LastEdited.Nice' => 'Edited',
                         'Created.Nice' => 'Created',
@@ -66,6 +68,7 @@ class ElementalAdmin extends ModelAdmin
                     $display_fields = [
                         'ID' => '#',
                         'Title' => 'Title',
+                        'Parent.OwnerTitleAndDescription' => 'Context',
                         'Type' => 'Type',
                         'LastEdited.Nice' => 'Edited',
                         'Created.Nice' => 'Created',

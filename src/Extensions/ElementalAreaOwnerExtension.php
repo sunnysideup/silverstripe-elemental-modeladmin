@@ -19,9 +19,24 @@ class ElementalAreaOwnerExtension extends Extension
      */
     public function OwnerTitleAndDescription() : string {
         $title = '';
-        if($owner = $this->owner->getOwnerPage()) {
-            $title = $owner->Title . " (" . $owner->i18n_singular_name() . " #{$owner->ID})";
+
+        // if the ElementalArea has a ContextTitle .. use that
+        if($this->owner->hasMethod('ContextTitle')) {
+            $areaTitle = $this->owner->ContextTitle();
+        } else {
+            $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT','Main content');
         }
+
+        if($ownerPage = $this->owner->getOwnerPage()) {
+            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . " (#{$ownerPage->ID})";
+        } else {
+            // unknown owner, or maybe no longer exists
+            // TODO: maybe use OwnerClassName?
+            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record') . " (record #" . $this->owner->ID . ")";
+        }
+
+        $title .= " - {$areaTitle} - #{$this->owner->ID}";
+
         return $title;
     }
 }

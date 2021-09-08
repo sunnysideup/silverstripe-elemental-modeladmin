@@ -4,17 +4,19 @@ This is a really simple module to expose Elemental elements (BaseElement and Ele
 
 You can set access to this admin area in the permissions area of the administration backend.
 
+## Features
+
++ Permission-based access to model admin
++ Support for multiple elemental areas
++ Move an element between elemental areas
+
 ## License
 
 [BSD-3-Clause](./LICENSE.md)
 
-## Documentation
-
-* [Documentation](./docs/en/001_index.md)
-
 ## Configuration
 
-None!
++ You can modify how elements are sorted in the model admin
 
 ## Maintainers
 
@@ -25,6 +27,10 @@ None!
 We welcome bug reports, pull requests and feature requests on the Github Issue tracker for this project.
 
 Please review the [code of conduct](./code-of-conduct.md) prior to opening a new issue.
+
+## Security
+
+If you have found a security issue with this module, please email digital[@]dpc.nsw.gov.au in the first instance, detailing your findings.
 
 ## Development and contribution
 

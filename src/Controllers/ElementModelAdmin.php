@@ -9,10 +9,18 @@ use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldPaginator;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldImportButton;
+use SilverStripe\Forms\GridField\GridFieldPrintButton;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
+/**
+ * An Elemental model administration area
+ * @author James
+ */
 class ElementalAdmin extends ModelAdmin
 {
 
@@ -23,11 +31,25 @@ class ElementalAdmin extends ModelAdmin
         BaseElement::class
     ];
 
+    /**
+     * @var string
+     */
     private static $default_sort = "LastEdited DESC";
 
+    /**
+     * @var string
+     */
     private static $menu_title = 'Elements';
+
+    /**
+     * @var string
+     */
     private static $url_segment = 'elements-admin';
 
+    /**
+     * Get the list of applicable elements, exclude ElementVirtual if available
+     * @return DataList
+     */
     public function getList()
     {
         $list = parent::getList();
@@ -44,6 +66,10 @@ class ElementalAdmin extends ModelAdmin
         return $list;
     }
 
+    /**
+     * Return the GridField form listing elements
+     * @return Form
+     */
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
@@ -71,8 +97,14 @@ class ElementalAdmin extends ModelAdmin
         }
 
         $gf->getConfig()
-            ->removeComponentsByType(GridFieldOrderableRows::class)// no ordering allowed
-            ->removeComponentsByType(GridFieldDeleteAction::class);// do not allow delete
+            ->removeComponentsByType([
+                GridFieldOrderableRows::class,// no ordering allowed
+                GridFieldDeleteAction::class,// do not allow delete
+                GridFieldAddNewButton::class,// do not allow adding new elements
+                GridFieldImportButton::class,
+                GridFieldExportButton::class,
+                GridFieldPrintButton::class
+            ]);
 
         return $form;
     }

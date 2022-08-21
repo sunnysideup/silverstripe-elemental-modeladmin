@@ -36,6 +36,12 @@ class ElementalAdmin extends ModelAdmin
     ];
 
     /**
+     * @var array
+     */
+    private static $excluded_managed_models = [
+    ];
+
+    /**
      * @var string
      */
     private static $default_sort = "LastEdited DESC";
@@ -76,18 +82,28 @@ class ElementalAdmin extends ModelAdmin
             Config::inst()->get(static::class, 'managed_models')
             + array_values(ClassInfo::subclassesFor(BaseElement::class, false));
         Config::modify()->set(static::class, 'managed_models', $list);
+        $excluded = Config::inst()->get(static::class, 'excluded_managed_models');
         $list = parent::getManagedModels();
         foreach($list as $key => $values) {
+            $remove = false;
+            if(in_array($values['dataClass'], $excluded)) {
+                $remove = true;
+            }
             if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
-                unset($list[$key]);
-                continue;
+                $remove = true;
             }
             $obj = Injector::inst()->get( $values['dataClass']);
             if(! $obj->canCreate()) {
+                $remove = true;
+            }
+            if($remove) {
                 unset($list[$key]);
                 continue;
             }
-            $list[$key]['title'] = str_replace(['Blocks', 'Block'], '', $values['title']);
+            $list[$key]['title'] = trim(str_ireplace(['Blocks', 'Block'], '', $values['title']));
+            if(!($list[$key]['title'] )) {
+                $list[$key]['title']  = 'Blocks';
+            }
         }
         return $list;
     }

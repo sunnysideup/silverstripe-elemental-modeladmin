@@ -49,12 +49,12 @@ class ElementalAdmin extends ModelAdmin
     /**
      * @var string
      */
-    private static $menu_title = 'Elements';
+    private static $menu_title = 'Blocks';
 
     /**
      * @var string
      */
-    private static $url_segment = 'elements-admin';
+    private static $url_segment = 'blocks-admin';
 
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available

@@ -15,6 +15,10 @@ use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
+
+use SilverStripe\Core\ClassInfo;
+
+use SilverStripe\Core\Config\Config;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
@@ -66,6 +70,29 @@ class ElementalAdmin extends ModelAdmin
         return $list;
     }
 
+    public function getManagedModels()
+    {
+        $list =
+            Config::inst()->get(static::class, 'managed_models')
+            + array_values(ClassInfo::subclassesFor(BaseElement::class, false));
+        Config::modify()->set(static::class, 'managed_models', $list);
+        $list = parent::getManagedModels();
+        foreach($list as $key => $values) {
+            if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
+                unset($list[$key]);
+                continue;
+            }
+            $obj = Injector::inst()->get( $values['dataClass']);
+            if(! $obj->canCreate()) {
+                unset($list[$key]);
+                continue;
+            }
+            $list[$key]['title'] = str_replace(['Blocks', 'Block'], '', $values['title']);
+        }
+        return $list;
+    }
+
+
     /**
      * Return the GridField form listing elements
      * @return Form
@@ -83,14 +110,12 @@ class ElementalAdmin extends ModelAdmin
         $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
         if ($dc) {
             $display_fields = [
-                'ID' => _t('ElementalModelAdmin.NUM', '#'),
                 'Title' => _t('ElementalModelAdmin.TITLE','Title'),
                 'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT','Context'),
                 'Type' => _t('ElementalModelAdmin.TYPE','Type'),
-                'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED','Edited'),
-                'Created.Nice' => _t('ElementalModelAdmin.CREATED','Created'),
+                'Created.Ago' => _t('ElementalModelAdmin.CREATED','Created'),
+                'LastEdited.Ago' => _t('ElementalModelAdmin.EDITED','Edited'),
                 'AvailableGlobally.Nice' => _t('ElementalModelAdmin.GLOBAL','Global'),
-                'Type' =>  _t('ElementalModelAdmin.TYPE','Type'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY','Summary')
             ];
             $dc->setDisplayFields($display_fields);

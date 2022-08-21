@@ -17,7 +17,8 @@ class ElementalAreaOwnerExtension extends Extension
      * If the owner 'page' exists, provide a short title with context
      * @return string
      */
-    public function OwnerTitleAndDescription() : string {
+    public function OwnerTitleAndDescription() : string
+    {
         $title = '';
 
         // if the ElementalArea has a ContextTitle .. use that
@@ -28,14 +29,14 @@ class ElementalAreaOwnerExtension extends Extension
         }
 
         if($ownerPage = $this->owner->getOwnerPage()) {
-            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . " (#{$ownerPage->ID})";
+            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title ;
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?
-            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record') . " (record #" . $this->owner->ID . ")";
+            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record');
         }
 
-        $title .= " - {$areaTitle} - #{$this->owner->ID}";
+        $title .= " - {$areaTitle}";
 
         return $title;
     }

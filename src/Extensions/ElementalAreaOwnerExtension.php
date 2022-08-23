@@ -29,14 +29,15 @@ class ElementalAreaOwnerExtension extends Extension
         }
 
         if($ownerPage = $this->owner->getOwnerPage()) {
-            $title =  $ownerPage->Title . ' ('.strip_tags($ownerPage->Breadcrumbs()).')';
+            $title =  $ownerPage->Title . ' ('.trim(strip_tags($ownerPage->Breadcrumbs())).')';
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?
             $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record');
         }
-
-        $title .= "» {$areaTitle}";
+        if($areaTitle) {
+            $title .= "» {$areaTitle}";
+        }
 
         return $title;
     }

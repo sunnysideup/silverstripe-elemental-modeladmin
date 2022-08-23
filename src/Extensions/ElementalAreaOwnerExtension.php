@@ -25,11 +25,11 @@ class ElementalAreaOwnerExtension extends Extension
         if($this->owner->hasMethod('ContextTitle')) {
             $areaTitle = $this->owner->ContextTitle();
         } else {
-            $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT','Main content');
+            $areaTitle = '';
         }
 
         if($ownerPage = $this->owner->getOwnerPage()) {
-            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title ;
+            $title =  $ownerPage->Title . ' ('.strip_tags($ownerPage->Breadcrumbs()).')';
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?

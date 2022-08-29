@@ -63,6 +63,7 @@ class ElementalAdmin extends ModelAdmin
     public function getList()
     {
         $list = parent::getList();
+        $list = $list->exclude(['ClassName:not' => $this->modelClass]);
         if($sort = $this->config()->get('default_sort')) {
             $list = $list->sort($sort);
         } else {
@@ -96,13 +97,20 @@ class ElementalAdmin extends ModelAdmin
             if(! $obj->canCreate()) {
                 $remove = true;
             }
+
+            $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
+            if($count < 1) {
+                $remove = true;
+            } else {
+                $list[$key]['title'] .= ' ('.$count.')';
+            }
             if($remove) {
                 unset($list[$key]);
                 continue;
             }
-            $list[$key]['title'] = trim(str_ireplace(['Blocks', 'Block'], '', $values['title']));
-            if(!($list[$key]['title'] )) {
-                $list[$key]['title']  = 'Blocks';
+            $list[$key]['title'] = trim(str_replace(['Columns', 'Column'], '', $list[$key]['title']));
+            if(!$list[$key]['title']) {
+                $list[$key]['title'] = 'Columns';
             }
         }
         return $list;

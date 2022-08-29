@@ -19,6 +19,8 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\ClassInfo;
 
 use SilverStripe\Core\Config\Config;
+
+use SilverStripe\ORM\DataObject;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**

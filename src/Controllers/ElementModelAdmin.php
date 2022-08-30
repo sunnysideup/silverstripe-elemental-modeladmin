@@ -110,9 +110,9 @@ class ElementalAdmin extends ModelAdmin
                 unset($list[$key]);
                 continue;
             }
-            $list[$key]['title'] = trim(str_replace(['Columns', 'Column'], '', $list[$key]['title']));
+            $list[$key]['title'] = trim(str_replace(['Blocks', 'Block', 'Element', 'Elements'], '', $list[$key]['title']));
             if(!$list[$key]['title']) {
-                $list[$key]['title'] = 'Columns';
+                $list[$key]['title'] = 'Blocks';
             }
         }
         return $list;

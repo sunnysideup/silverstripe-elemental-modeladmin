@@ -44,8 +44,9 @@ class ElementalAreaOwnerExtension extends Extension
             // TODO: maybe use OwnerClassName?
             $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record');
         }
-
-        $title .= " &raquo; {$areaTitle}";
+        if($areaTitle) {
+            $title .= "» {$areaTitle}";
+        }
 
         return $title;
     }

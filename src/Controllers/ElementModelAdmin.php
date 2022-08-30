@@ -19,6 +19,8 @@ use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\ClassInfo;
 
 use SilverStripe\Core\Config\Config;
+
+use SilverStripe\ORM\DataObject;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
@@ -96,11 +98,18 @@ class ElementalAdmin extends ModelAdmin
             if(! $obj->canCreate()) {
                 $remove = true;
             }
+
+            $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
+            if($count < 1) {
+                $remove = true;
+            } else {
+                $list[$key]['title'] .= ' ('.$count.')';
+            }
             if($remove) {
                 unset($list[$key]);
                 continue;
             }
-            $list[$key]['title'] = trim(str_ireplace(['Blocks', 'Block'], '', $values['title']));
+            $list[$key]['title'] = trim(str_ireplace(['Blocks', 'Block'], '', $list[$key]['title']));
             if(!($list[$key]['title'] )) {
                 $list[$key]['title']  = 'Blocks';
             }

@@ -65,6 +65,7 @@ class ElementalAdmin extends ModelAdmin
     public function getList()
     {
         $list = parent::getList();
+        $list = $list->exclude(['ClassName:not' => $this->modelClass]);
         if($sort = $this->config()->get('default_sort')) {
             $list = $list->sort($sort);
         } else {
@@ -109,9 +110,9 @@ class ElementalAdmin extends ModelAdmin
                 unset($list[$key]);
                 continue;
             }
-            $list[$key]['title'] = trim(str_ireplace(['Blocks', 'Block'], '', $list[$key]['title']));
-            if(!($list[$key]['title'] )) {
-                $list[$key]['title']  = 'Blocks';
+            $list[$key]['title'] = trim(str_replace(['Columns', 'Column'], '', $list[$key]['title']));
+            if(!$list[$key]['title']) {
+                $list[$key]['title'] = 'Columns';
             }
         }
         return $list;

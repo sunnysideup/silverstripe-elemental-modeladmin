@@ -1,6 +1,6 @@
 {
     "name": "nswdpc/silverstripe-elemental-modeladmin",
-    "description": "ModelAdmin for elemental elements",
+    "description": "An administration module for elemental content blocks",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe",

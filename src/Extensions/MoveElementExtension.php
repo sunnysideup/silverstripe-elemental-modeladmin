@@ -30,12 +30,12 @@ class MoveElementExtension extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
         // these fields are only exposed in the ModelAdmin
-        if( get_class(Controller::curr()) != ElementalAdmin::class) {
+        if (get_class(Controller::curr()) != ElementalAdmin::class) {
             return;
         }
 
         $areas = $this->owner->getApplicableElementalAreas();
-        if(!$areas || $areas->count() == 0) {
+        if (!$areas || $areas->count() == 0) {
             return;
         }
 
@@ -46,7 +46,7 @@ class MoveElementExtension extends DataExtension
         )->setEmptyString('');
 
         $area = $this->owner->Parent();
-        if($area instanceof ElementalArea) {
+        if ($area instanceof ElementalArea) {
             $description = $area->OwnerTitleAndDescription();
             $field->setDescription(
                 _t(
@@ -66,10 +66,11 @@ class MoveElementExtension extends DataExtension
      * Retrieve all available owner classes
      * @return array
      */
-    public function getAreaOwnerClasses() : array {
+    public function getAreaOwnerClasses() : array
+    {
         $classes = [];
-        if($list = DB::Query("SELECT `OwnerClassName` FROM `ElementalArea` GROUP BY `OwnerClassName`")) {
-            foreach($list as $record) {
+        if ($list = DB::Query("SELECT `OwnerClassName` FROM `ElementalArea` GROUP BY `OwnerClassName`")) {
+            foreach ($list as $record) {
                 $classes[] = $record['OwnerClassName'];
             }
         }
@@ -80,38 +81,39 @@ class MoveElementExtension extends DataExtension
      * Get all possible element relations
      * @return array
      */
-    public function getElementalAreaRelations() : array {
+    public function getElementalAreaRelations() : array
+    {
         $relations = [];
         $relations[] = "ElementalArea";// default
 
         $classes = $this->owner->config()->get('supported_parent_classes');
-        if(empty($classes) || !is_array($classes)) {
+        if (empty($classes) || !is_array($classes)) {
             $classes = [\Page::class];
         }
 
         $sourceClasses = ClassInfo::subclassesFor(ElementalArea::class, true);
 
         // filter relations that are an ElementalArea or subclass
-        $filter = function($var) use ($sourceClasses) {
+        $filter = function ($var) use ($sourceClasses) {
             return in_array($var, $sourceClasses);
         };
 
-        foreach($classes as $class) {
-            $has_one = Config::inst()->get( $class, 'has_one' );
-            if(!is_array($has_one) || empty($has_one)) {
+        foreach ($classes as $class) {
+            $has_one = Config::inst()->get($class, 'has_one');
+            if (!is_array($has_one) || empty($has_one)) {
                 // ignore
                 continue;
             }
-            $result = array_filter( $has_one, $filter );
+            $result = array_filter($has_one, $filter);
             $relations = array_merge($relations, array_keys($result));
         }
 
         $relations = array_unique($relations);
 
-        $suffix = function(&$value) {
+        $suffix = function (&$value) {
             $value .= "ID";
         };
-        array_walk($relations, $suffix );
+        array_walk($relations, $suffix);
 
         return $relations;
     }
@@ -121,7 +123,8 @@ class MoveElementExtension extends DataExtension
      * @param bool exclude_current if true, the current element's parent will be excluded from the returned list
      * @return \SilverStripe\ORM\DataList|null
      */
-    public function getApplicableElementalAreas(bool $exclude_current = true) {
+    public function getApplicableElementalAreas(bool $exclude_current = true)
+    {
 
         // get available classes
         $classes = $this->owner->getAreaOwnerClasses();
@@ -129,7 +132,7 @@ class MoveElementExtension extends DataExtension
         $relationColumns = $this->owner->getElementalAreaRelations();
 
         $area_ids = [];
-        foreach($classes as $class) {
+        foreach ($classes as $class) {
             try {
                 $inst = Injector::inst()->get($class);
                 /**
@@ -137,20 +140,19 @@ class MoveElementExtension extends DataExtension
                  * avoid returning the IDs for these areas
                  * this could occur if a module was removed
                  */
-                if(!$inst || !($inst instanceof DataObject)) {
+                if (!$inst || !($inst instanceof DataObject)) {
                     continue;
                 }
 
                 $list = $class::get()->setQueriedColumns($relationColumns);
-                foreach($list as $record) {
+                foreach ($list as $record) {
                     //e.g record = \Page
-                    foreach($relationColumns as $relationColumn) {
-                        if(!empty($record->{$relationColumn})) {
+                    foreach ($relationColumns as $relationColumn) {
+                        if (!empty($record->{$relationColumn})) {
                             $area_ids[] = $record->{$relationColumn};
                         }
                     }
                 }
-
             } catch (\Exception $e) {
                 //noop - ignore DB errors and the like
             }
@@ -158,11 +160,11 @@ class MoveElementExtension extends DataExtension
 
         // grab a uniq list of ElementArea.ID values
         $area_ids = array_unique($area_ids);
-        if(!empty($area_ids)) {
+        if (!empty($area_ids)) {
             $list = ElementalArea::get()
                         ->filter(['ID' => $area_ids])
                         ->sort('LastEdited DESC');
-            if($exclude_current) {
+            if ($exclude_current) {
                 // exclude the current element's area
                 $list = $list->exclude([ 'ID' => $this->owner->ParentID ]);
             }

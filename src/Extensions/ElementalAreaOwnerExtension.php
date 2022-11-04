@@ -17,17 +17,18 @@ class ElementalAreaOwnerExtension extends Extension
      * If the owner 'page' exists, provide a short title with context
      * @return string
      */
-    public function OwnerTitleAndDescription() : string {
+    public function OwnerTitleAndDescription() : string
+    {
         $title = '';
 
         // if the ElementalArea has a ContextTitle .. use that
-        if($this->owner->hasMethod('ContextTitle')) {
+        if ($this->owner->hasMethod('ContextTitle')) {
             $areaTitle = $this->owner->ContextTitle();
         } else {
-            $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT','Main content');
+            $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT', 'Main content');
         }
 
-        if($ownerPage = $this->owner->getOwnerPage()) {
+        if ($ownerPage = $this->owner->getOwnerPage()) {
             $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . " (#{$ownerPage->ID})";
         } else {
             // unknown owner, or maybe no longer exists

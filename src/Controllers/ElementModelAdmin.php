@@ -89,10 +89,13 @@ class ElementalAdmin extends ModelAdmin
                 'Type' => _t('ElementalModelAdmin.TYPE','Type'),
                 'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED','Edited'),
                 'Created.Nice' => _t('ElementalModelAdmin.CREATED','Created'),
-                'AvailableGlobally.Nice' => _t('ElementalModelAdmin.GLOBAL','Global'),
                 'Type' =>  _t('ElementalModelAdmin.TYPE','Type'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY','Summary')
             ];
+            if(class_exists(ElementVirtual::class)) {
+                // This field is provided by ElementVirtual component
+                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL','Global');
+            }
             $dc->setDisplayFields($display_fields);
         }
 

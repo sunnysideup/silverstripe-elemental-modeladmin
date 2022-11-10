@@ -110,10 +110,16 @@ class ElementalAdmin extends ModelAdmin
                 unset($list[$key]);
                 continue;
             }
+<<<<<<< HEAD
             $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental'];
             $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
             if(!$list[$key]['title']) {
                 $list[$key]['title'] = 'Block / Column';
+=======
+            $list[$key]['title'] = trim(str_replace(['Blocks', 'Block', 'Element', 'Elements'], '', $list[$key]['title']));
+            if(!$list[$key]['title']) {
+                $list[$key]['title'] = 'Blocks';
+>>>>>>> 86678c36eb0f00aa53c46376d4fa45d8fd4fae48
             }
         }
         return $list;

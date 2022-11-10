@@ -13,11 +13,20 @@ use SilverStripe\Core\Extension;
  */
 class ElementalAreaOwnerExtension extends Extension
 {
+
+    private static $casting = [
+        'OwnerTitleAndDescription' => 'Varchar',
+    ];
+
     /**
      * If the owner 'page' exists, provide a short title with context
      * @return string
      */
     public function OwnerTitleAndDescription() : string
+    {
+        return $this->getOwnerTitleAndDescription();
+    }
+    public function getOwnerTitleAndDescription() : string
     {
         $title = '';
 
@@ -29,7 +38,7 @@ class ElementalAreaOwnerExtension extends Extension
         }
 
         if($ownerPage = $this->owner->getOwnerPage()) {
-            $title =  $ownerPage->Title . ' ('.trim(strip_tags($ownerPage->Breadcrumbs())).')';
+            $title =  $ownerPage->Title . ' ('.str_replace("\n", '', trim(strip_tags($ownerPage->Breadcrumbs()))).')';
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?

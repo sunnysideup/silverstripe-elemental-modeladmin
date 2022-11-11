@@ -6,6 +6,9 @@ use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldPaginator;
@@ -13,6 +16,7 @@ use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldImportButton;
 use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
+use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
@@ -93,6 +97,10 @@ class ElementalAdmin extends ModelAdmin
                 'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
             ];
+            if(class_exists(ElementVirtual::class)) {
+                // This field is provided by ElementVirtual component
+                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL','Global');
+            }
             $dc->setDisplayFields($display_fields);
         }
 
@@ -106,6 +114,46 @@ class ElementalAdmin extends ModelAdmin
                 GridFieldPrintButton::class
             ]);
 
+        // Apply the block type filter header, added in ElementSearchExtension
+        $this->applyBlockTypeFilter($gf);
+
         return $form;
+    }
+
+    /**
+     * Apply a block type filter to the search context
+     * @param $gf GridField with a filter header
+     * @return void
+     */
+    protected function applyBlockTypeFilter(GridField &$gf) {
+        $gfConfig = $gf->getConfig();
+        // add field with search context callback
+        $filterHeader = $gfConfig->getComponentByType( GridFieldFilterHeader::class );
+        $searchContext = $filterHeader->getSearchContext($gf);
+        $fields = $searchContext->getFields();
+        if($fields) {
+            $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
+            $filterSource = [];
+            foreach($sourceBlockTypes as $k => $className) {
+                $inst = Injector::inst()->get( $className );
+                $filterSource[ $className  ] = $inst->getType();
+            }
+            asort($filterSource);
+            $fields->push(
+                DropdownField::create(
+                    'ClassName',
+                    _t(
+                        'ElementalModelAdmin.BLOCK_TYPE',
+                        'Content block type'
+                    ),
+                    $filterSource
+                )->setEmptyString(
+                    _t(
+                        'ElementalModelAdmin.BLOCK_TYPE_SELECT',
+                        'Filter by a content block type'
+                    )
+                )
+            );
+        }
     }
 }

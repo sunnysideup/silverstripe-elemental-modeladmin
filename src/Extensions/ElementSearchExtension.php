@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Elemental\Extensions\ModelAdmin;
 
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\ORM\DataExtension;
 
 /**
@@ -21,6 +22,16 @@ class ElementSearchExtension extends DataExtension
             }
             $orderedFields[ $k ] = $fields[ $k ];
         }
+
+        /**
+         * Add a ClassName filter to the searchable fields
+         * The source values are populated in the modeladmin GridFieldFilterHeader
+         */
+        $orderedFields['ClassName'] = [
+           'title' => _t('ElementalModelAdmin.BLOCK_TYPE', 'Content block type'),
+           'field' => DropdownField::class,
+           'filter' => 'ExactMatchFilter',
+        ];
         $fields = $orderedFields;
     }
 }

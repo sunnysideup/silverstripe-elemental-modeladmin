@@ -57,13 +57,13 @@ class ElementalAdmin extends ModelAdmin
     public function getList()
     {
         $list = parent::getList();
-        if($sort = $this->config()->get('default_sort')) {
+        if ($sort = $this->config()->get('default_sort')) {
             $list = $list->sort($sort);
         } else {
             $list = $list->sort("LastEdited DESC");
         }
 
-        if(class_exists(ElementVirtual::class)) {
+        if (class_exists(ElementVirtual::class)) {
             $list = $list->exclude(["ClassName" => ElementVirtual::class ]);
         }
 
@@ -88,13 +88,13 @@ class ElementalAdmin extends ModelAdmin
         if ($dc) {
             $display_fields = [
                 'ID' => _t('ElementalModelAdmin.NUM', '#'),
-                'Title' => _t('ElementalModelAdmin.TITLE','Title'),
-                'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT','Context'),
-                'Type' => _t('ElementalModelAdmin.TYPE','Type'),
-                'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED','Edited'),
-                'Created.Nice' => _t('ElementalModelAdmin.CREATED','Created'),
-                'Type' =>  _t('ElementalModelAdmin.TYPE','Type'),
-                'Summary' =>  _t('ElementalModelAdmin.SUMMARY','Summary')
+                'Title' => _t('ElementalModelAdmin.TITLE', 'Title'),
+                'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT', 'Context'),
+                'Type' => _t('ElementalModelAdmin.TYPE', 'Type'),
+                'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED', 'Edited'),
+                'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
+                'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
+                'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
             ];
             if(class_exists(ElementVirtual::class)) {
                 // This field is provided by ElementVirtual component

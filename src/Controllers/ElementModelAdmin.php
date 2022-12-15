@@ -89,8 +89,6 @@ class ElementalAdmin extends ModelAdmin
                 'Type' => _t('ElementalModelAdmin.TYPE','Type'),
                 'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED','Edited'),
                 'Created.Nice' => _t('ElementalModelAdmin.CREATED','Created'),
-                'AvailableGlobally.Nice' => _t('ElementalModelAdmin.GLOBAL','Global'),
-                'Type' =>  _t('ElementalModelAdmin.TYPE','Type'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY','Summary')
             ];
             $dc->setDisplayFields($display_fields);

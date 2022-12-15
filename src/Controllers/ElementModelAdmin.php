@@ -15,6 +15,12 @@ use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
+
+use SilverStripe\Core\ClassInfo;
+
+use SilverStripe\Core\Config\Config;
+
+use SilverStripe\ORM\DataObject;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
@@ -32,6 +38,12 @@ class ElementalAdmin extends ModelAdmin
     ];
 
     /**
+     * @var array
+     */
+    private static $excluded_managed_models = [
+    ];
+
+    /**
      * @var string
      */
     private static $default_sort = "LastEdited DESC";
@@ -39,12 +51,12 @@ class ElementalAdmin extends ModelAdmin
     /**
      * @var string
      */
-    private static $menu_title = 'Elements';
+    private static $menu_title = 'Blocks';
 
     /**
      * @var string
      */
-    private static $url_segment = 'elements-admin';
+    private static $url_segment = 'blocks-admin';
 
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available
@@ -53,6 +65,7 @@ class ElementalAdmin extends ModelAdmin
     public function getList()
     {
         $list = parent::getList();
+        $list = $list->exclude(['ClassName:not' => $this->modelClass]);
         if($sort = $this->config()->get('default_sort')) {
             $list = $list->sort($sort);
         } else {
@@ -65,6 +78,47 @@ class ElementalAdmin extends ModelAdmin
 
         return $list;
     }
+
+    public function getManagedModels()
+    {
+        $list =
+            Config::inst()->get(static::class, 'managed_models')
+            + array_values(ClassInfo::subclassesFor(BaseElement::class, false));
+        Config::modify()->set(static::class, 'managed_models', $list);
+        $excluded = Config::inst()->get(static::class, 'excluded_managed_models');
+        $list = parent::getManagedModels();
+        foreach($list as $key => $values) {
+            $remove = false;
+            if(in_array($values['dataClass'], $excluded)) {
+                $remove = true;
+            }
+            if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
+                $remove = true;
+            }
+            $obj = Injector::inst()->get( $values['dataClass']);
+            if(! $obj->canCreate()) {
+                $remove = true;
+            }
+
+            $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
+            if($count < 1) {
+                $remove = true;
+            } else {
+                $list[$key]['title'] .= ' ('.$count.')';
+            }
+            if($remove) {
+                unset($list[$key]);
+                continue;
+            }
+            $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+            $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
+            if(!$list[$key]['title']) {
+                $list[$key]['title'] = 'Blocks / Columns';
+            }
+        }
+        return $list;
+    }
+
 
     /**
      * Return the GridField form listing elements
@@ -83,12 +137,11 @@ class ElementalAdmin extends ModelAdmin
         $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
         if ($dc) {
             $display_fields = [
-                'ID' => _t('ElementalModelAdmin.NUM', '#'),
                 'Title' => _t('ElementalModelAdmin.TITLE','Title'),
                 'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT','Context'),
                 'Type' => _t('ElementalModelAdmin.TYPE','Type'),
-                'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED','Edited'),
-                'Created.Nice' => _t('ElementalModelAdmin.CREATED','Created'),
+                'Created.Ago' => _t('ElementalModelAdmin.CREATED','Created'),
+                'LastEdited.Ago' => _t('ElementalModelAdmin.EDITED','Edited'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY','Summary')
             ];
             $dc->setDisplayFields($display_fields);

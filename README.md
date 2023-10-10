@@ -1,6 +1,6 @@
 # Elemental Modeladmin
 
-This is a really simple module to expose Elemental elements (BaseElement and ElementContent) in a ModelAdmin
+This is a really simple module allowing administration of content blocks (elements) in a standard model admin.
 
 You can set access to this admin area in the permissions area of the administration backend.
 
@@ -10,13 +10,19 @@ You can set access to this admin area in the permissions area of the administrat
 + Support for multiple elemental areas
 + Move an element between elemental areas
 
+## Installation
+
+```sh
+composer require nswdpc/silverstripe-elemental-modeladmin
+```
+
 ## License
 
 [BSD-3-Clause](./LICENSE.md)
 
 ## Configuration
 
-+ You can modify how elements are sorted in the model admin
++ You can modify how elements are sorted in the model admin, see [config.yml](_config/config.yml).
 
 ## Maintainers
 

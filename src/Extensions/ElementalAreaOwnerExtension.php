@@ -31,22 +31,21 @@ class ElementalAreaOwnerExtension extends Extension
         $title = '';
 
         // if the ElementalArea has a ContextTitle .. use that
-        if($this->owner->hasMethod('ContextTitle')) {
+        if ($this->owner->hasMethod('ContextTitle')) {
             $areaTitle = $this->owner->ContextTitle();
         } else {
-            $areaTitle = '';
+            $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT', 'Main content');
         }
 
-        if($ownerPage = $this->owner->getOwnerPage()) {
-            $title =  $ownerPage->Title . ' ('.str_replace("\n", '', trim(strip_tags($ownerPage->Breadcrumbs()))).')';
+        if ($ownerPage = $this->owner->getOwnerPage()) {
+            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . " (#{$ownerPage->ID})";
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?
-            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record');
+            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record') . " (record #" . $this->owner->ID . ")";
         }
-        if($areaTitle) {
-            $title .= "» {$areaTitle}";
-        }
+
+        $title .= " - {$areaTitle} - #{$this->owner->ID}";
 
         return $title;
     }

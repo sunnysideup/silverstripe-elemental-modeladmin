@@ -22,13 +22,14 @@ use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\DataObject;
+
 /**
  * An Elemental model administration area
  * @author James
  */
 class ElementalAdmin extends ModelAdmin
 {
-
     /**
      * @var array
      */
@@ -94,7 +95,7 @@ class ElementalAdmin extends ModelAdmin
             if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
                 $remove = true;
             }
-            $obj = Injector::inst()->get( $values['dataClass']);
+            $obj = Injector::inst()->get($values['dataClass']);
             if(! $obj->canCreate()) {
                 $remove = true;
             }
@@ -103,7 +104,7 @@ class ElementalAdmin extends ModelAdmin
             if($count < 1) {
                 $remove = true;
             } else {
-                $list[$key]['title'] .= ' ('.$count.')';
+                $list[$key]['title'] .= ' (' . $count . ')';
             }
             if($remove) {
                 unset($list[$key]);
@@ -147,7 +148,7 @@ class ElementalAdmin extends ModelAdmin
             ];
             if(class_exists(ElementVirtual::class)) {
                 // This field is provided by ElementVirtual component
-                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL','Global');
+                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
             }
             $dc->setDisplayFields($display_fields);
         }
@@ -173,17 +174,19 @@ class ElementalAdmin extends ModelAdmin
      * @param $gf GridField with a filter header
      * @return void
      */
-    protected function applyBlockTypeFilter(GridField &$gf) {
+    protected function applyBlockTypeFilter(GridField &$gf)
+    {
         $gfConfig = $gf->getConfig();
         // add field with search context callback
-        $filterHeader = $gfConfig->getComponentByType( GridFieldFilterHeader::class );
+        /** @var GridFieldFilterHeader $filterHeader */
+        $filterHeader = $gfConfig->getComponentByType(GridFieldFilterHeader::class);
         $searchContext = $filterHeader->getSearchContext($gf);
         $fields = $searchContext->getFields();
         if($fields) {
             $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
             $filterSource = [];
             foreach($sourceBlockTypes as $k => $className) {
-                $inst = Injector::inst()->get( $className );
+                $inst = Injector::inst()->get($className);
                 $filterSource[ $className  ] = $inst->getType();
             }
             asort($filterSource);

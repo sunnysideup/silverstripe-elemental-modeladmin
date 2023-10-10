@@ -1,0 +1,225 @@
+<?php
+
+namespace NSWDPC\Elemental;
+
+use DNADesign\Elemental\Models\BaseElement;
+use DNADesign\Elemental\Models\ElementContent;
+use DNADesign\ElementalVirtual\Model\ElementVirtual;
+use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Core\ClassInfo;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldDataColumns;
+use SilverStripe\Forms\GridField\GridFieldDeleteAction;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
+use SilverStripe\Forms\GridField\GridFieldImportButton;
+use SilverStripe\Forms\GridField\GridFieldPrintButton;
+use SilverStripe\Forms\GridField\GridFieldExportButton;
+use SilverStripe\Forms\GridField\GridFieldFilterHeader;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\Injector\Injector;
+
+use SilverStripe\Core\ClassInfo;
+
+use SilverStripe\Core\Config\Config;
+
+use SilverStripe\ORM\DataObject;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+
+/**
+ * An Elemental model administration area
+ * @author James
+ */
+class ElementalAdmin extends ModelAdmin
+{
+
+    /**
+     * @var array
+     */
+    private static $managed_models = [
+        BaseElement::class
+    ];
+
+    /**
+     * @var array
+     */
+    private static $excluded_managed_models = [
+    ];
+
+    /**
+     * @var string
+     */
+    private static $default_sort = "LastEdited DESC";
+
+    /**
+     * @var string
+     */
+    private static $menu_title = 'Blocks';
+
+    /**
+     * @var string
+     */
+    private static $url_segment = 'blocks-admin';
+
+    /**
+     * Get the list of applicable elements, exclude ElementVirtual if available
+     * @return DataList
+     */
+    public function getList()
+    {
+        $list = parent::getList();
+<<<<<<< HEAD
+        $list = $list->exclude(['ClassName:not' => $this->modelClass]);
+        if($sort = $this->config()->get('default_sort')) {
+=======
+        if ($sort = $this->config()->get('default_sort')) {
+>>>>>>> upstream/ss5
+            $list = $list->sort($sort);
+        } else {
+            $list = $list->sort("LastEdited DESC");
+        }
+
+        if (class_exists(ElementVirtual::class)) {
+            $list = $list->exclude(["ClassName" => ElementVirtual::class ]);
+        }
+
+        return $list;
+    }
+
+    public function getManagedModels()
+    {
+        $list =
+            Config::inst()->get(static::class, 'managed_models')
+            + array_values(ClassInfo::subclassesFor(BaseElement::class, false));
+        Config::modify()->set(static::class, 'managed_models', $list);
+        $excluded = Config::inst()->get(static::class, 'excluded_managed_models');
+        $list = parent::getManagedModels();
+        foreach($list as $key => $values) {
+            $remove = false;
+            if(in_array($values['dataClass'], $excluded)) {
+                $remove = true;
+            }
+            if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
+                $remove = true;
+            }
+            $obj = Injector::inst()->get( $values['dataClass']);
+            if(! $obj->canCreate()) {
+                $remove = true;
+            }
+
+            $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
+            if($count < 1) {
+                $remove = true;
+            } else {
+                $list[$key]['title'] .= ' ('.$count.')';
+            }
+            if($remove) {
+                unset($list[$key]);
+                continue;
+            }
+            $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+            $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
+            if(!$list[$key]['title']) {
+                $list[$key]['title'] = 'Blocks / Columns';
+            }
+        }
+        return $list;
+    }
+
+
+    /**
+     * Return the GridField form listing elements
+     * @return Form
+     */
+    public function getEditForm($id = null, $fields = null)
+    {
+        $form = parent::getEditForm($id, $fields);
+        $gf = $form->Fields()->dataFieldByName($this->sanitiseClassName($this->modelClass));
+
+        $paging = $gf->getConfig()->getComponentByType(GridFieldPaginator::class);
+        if ($paging) {
+            $paging->setItemsPerPage(10);
+        }
+
+        $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
+        if ($dc) {
+            $display_fields = [
+<<<<<<< HEAD
+                'Title' => _t('ElementalModelAdmin.TITLE','Title'),
+                'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT','Context'),
+                'Type' => _t('ElementalModelAdmin.TYPE','Type'),
+                'Created.Ago' => _t('ElementalModelAdmin.CREATED','Created'),
+                'LastEdited.Ago' => _t('ElementalModelAdmin.EDITED','Edited'),
+                'Summary' =>  _t('ElementalModelAdmin.SUMMARY','Summary')
+=======
+                'ID' => _t('ElementalModelAdmin.NUM', '#'),
+                'Title' => _t('ElementalModelAdmin.TITLE', 'Title'),
+                'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT', 'Context'),
+                'Type' => _t('ElementalModelAdmin.TYPE', 'Type'),
+                'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED', 'Edited'),
+                'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
+                'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
+                'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
+>>>>>>> upstream/ss5
+            ];
+            if(class_exists(ElementVirtual::class)) {
+                // This field is provided by ElementVirtual component
+                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL','Global');
+            }
+            $dc->setDisplayFields($display_fields);
+        }
+
+        $gf->getConfig()
+            ->removeComponentsByType([
+                GridFieldOrderableRows::class,// no ordering allowed
+                GridFieldDeleteAction::class,// do not allow delete
+                GridFieldAddNewButton::class,// do not allow adding new elements
+                GridFieldImportButton::class,
+                GridFieldExportButton::class,
+                GridFieldPrintButton::class
+            ]);
+
+        // Apply the block type filter header, added in ElementSearchExtension
+        $this->applyBlockTypeFilter($gf);
+
+        return $form;
+    }
+
+    /**
+     * Apply a block type filter to the search context
+     * @param $gf GridField with a filter header
+     * @return void
+     */
+    protected function applyBlockTypeFilter(GridField &$gf) {
+        $gfConfig = $gf->getConfig();
+        // add field with search context callback
+        $filterHeader = $gfConfig->getComponentByType( GridFieldFilterHeader::class );
+        $searchContext = $filterHeader->getSearchContext($gf);
+        $fields = $searchContext->getFields();
+        if($fields) {
+            $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
+            $filterSource = [];
+            foreach($sourceBlockTypes as $k => $className) {
+                $inst = Injector::inst()->get( $className );
+                $filterSource[ $className  ] = $inst->getType();
+            }
+            asort($filterSource);
+            $fields->push(
+                DropdownField::create(
+                    'ClassName',
+                    _t(
+                        'ElementalModelAdmin.BLOCK_TYPE',
+                        'Content block type'
+                    ),
+                    $filterSource
+                )->setEmptyString(
+                    _t(
+                        'ElementalModelAdmin.BLOCK_TYPE_SELECT',
+                        'Filter by a content block type'
+                    )
+                )
+            );
+        }
+    }
+}

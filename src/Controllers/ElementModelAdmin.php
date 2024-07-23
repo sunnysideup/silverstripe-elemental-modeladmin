@@ -25,7 +25,7 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
  * An Elemental model administration area
  * @author James
  */
-class ElementalAdmin extends ModelAdmin
+class ElementModelAdmin extends ModelAdmin
 {
 
     /**

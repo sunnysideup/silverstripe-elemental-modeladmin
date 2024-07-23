@@ -76,7 +76,7 @@ class MoveElementExtension extends DataExtension
     public function getAreaOwnerClasses() : array
     {
         $classes = [];
-        if ($list = DB::Query("SELECT `OwnerClassName` FROM `ElementalArea` GROUP BY `OwnerClassName`")) {
+        if ($list = DB::Query("SELECT \"OwnerClassName\" FROM \"ElementalArea\" GROUP BY \"OwnerClassName\"")) {
             foreach ($list as $record) {
                 $classes[] = $record['OwnerClassName'];
             }

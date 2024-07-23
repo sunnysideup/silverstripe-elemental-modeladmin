@@ -34,7 +34,7 @@ class MoveElementExtension extends DataExtension
             return;
         }
 
-        $areas = $this->owner->getApplicableElementalAreas();
+        $areas = $this->owner->getApplicableElementalAreas(false);
         if (!$areas || $areas->count() == 0) {
             return;
         }
@@ -43,7 +43,13 @@ class MoveElementExtension extends DataExtension
             'ParentID',
             _t('ElementalModelAdmin.MOVE_TO_AREA', 'Move this block'),
             $areas->map('ID', 'OwnerTitleAndDescription')
-        )->setEmptyString('');
+        )->setEmptyString('')
+        ->setRightTitle(
+            _t(
+                'ElementalModelAdmin.EMPTY_AREA_CHANGE_INFO',
+                'Choosing an empty value will orphan this record. To re-link it, choose the relevant record from the list.'
+            )
+        );
 
         $area = $this->owner->Parent();
         if ($area instanceof ElementalArea) {
@@ -51,9 +57,10 @@ class MoveElementExtension extends DataExtension
             $field->setDescription(
                 _t(
                     'ElementalModelAdmin.CURRENT_AREA',
-                    'Choose a new owner. This block is currently associated with \'<em>{description}</em>\'',
+                    'Choose a record to move this block to.'
+                    . ' This block is currently associated with \'<em>{description}</em>\'',
                     [
-                        'description' => $description
+                        'description' => htmlspecialchars($description)
                     ]
                 )
             );

@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Elemental;
+namespace NSWDPC\Elemental\ModelAdmin\Controllers;
 
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementContent;
@@ -25,7 +25,7 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
  * An Elemental model administration area
  * @author James
  */
-class ElementalAdmin extends ModelAdmin
+class ElementModelAdmin extends ModelAdmin
 {
 
     /**

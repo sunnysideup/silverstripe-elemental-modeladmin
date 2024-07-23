@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Elemental;
+namespace NSWDPC\Elemental\ModelAdmin\Controllers;
 
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementContent;

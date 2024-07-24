@@ -3,7 +3,7 @@
 namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
 use DNADesign\Elemental\Models\ElementalArea;
-use NSWDPC\Elemental\ElementalAdmin;
+use NSWDPC\Elemental\ModelAdmin\Controllers\ElementModelAdmin;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
@@ -30,7 +30,7 @@ class MoveElementExtension extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
         // these fields are only exposed in the ModelAdmin
-        if (get_class(Controller::curr()) != ElementalAdmin::class) {
+        if (get_class(Controller::curr()) != ElementModelAdmin::class) {
             return;
         }
 

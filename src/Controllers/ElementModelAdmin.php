@@ -20,13 +20,13 @@ use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\Form;
 use SilverStripe\ORM\DataObject;
 
 /**
  * An Elemental model administration area
- * @author James
+ *
  */
 class ElementalAdmin extends ModelAdmin
 {
@@ -34,7 +34,7 @@ class ElementalAdmin extends ModelAdmin
      * @var array
      */
     private static $managed_models = [
-        BaseElement::class
+        BaseElement::class,
     ];
 
     /**
@@ -87,32 +87,32 @@ class ElementalAdmin extends ModelAdmin
         Config::modify()->set(static::class, 'managed_models', $list);
         $excluded = Config::inst()->get(static::class, 'excluded_managed_models');
         $list = parent::getManagedModels();
-        foreach($list as $key => $values) {
+        foreach ($list as $key => $values) {
             $remove = false;
-            if(in_array($values['dataClass'], $excluded)) {
+            if (in_array($values['dataClass'], $excluded)) {
                 $remove = true;
             }
-            if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
+            if (class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
                 $remove = true;
             }
             $obj = Injector::inst()->get($values['dataClass']);
-            if(! $obj->canCreate()) {
+            if (! $obj->canCreate()) {
                 $remove = true;
             }
 
             $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
-            if($count < 1) {
+            if ($count < 1) {
                 $remove = true;
             } else {
                 $list[$key]['title'] .= ' (' . $count . ')';
             }
-            if($remove) {
+            if ($remove) {
                 unset($list[$key]);
                 continue;
             }
             $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
             $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
-            if(!$list[$key]['title']) {
+            if (!$list[$key]['title']) {
                 $list[$key]['title'] = 'Blocks / Columns';
             }
         }
@@ -146,7 +146,7 @@ class ElementalAdmin extends ModelAdmin
                 'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
             ];
-            if(class_exists(ElementVirtual::class)) {
+            if (class_exists(ElementVirtual::class)) {
                 // This field is provided by ElementVirtual component
                 $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
             }
@@ -182,10 +182,10 @@ class ElementalAdmin extends ModelAdmin
         $filterHeader = $gfConfig->getComponentByType(GridFieldFilterHeader::class);
         $searchContext = $filterHeader->getSearchContext($gf);
         $fields = $searchContext->getFields();
-        if($fields) {
+        if ($fields) {
             $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
             $filterSource = [];
-            foreach($sourceBlockTypes as $k => $className) {
+            foreach ($sourceBlockTypes as $k => $className) {
                 $inst = Injector::inst()->get($className);
                 $filterSource[ $className  ] = $inst->getType();
             }

@@ -7,6 +7,8 @@ use SilverStripe\ORM\DataExtension;
 
 /**
  * A hackish way of getting the title to appear first for searches
+ *
+ * @property BaseElement|ElementSearchExtension $owner
  */
 class ElementSearchExtension extends DataExtension
 {

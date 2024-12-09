@@ -9,7 +9,8 @@ use SilverStripe\Core\Extension;
  * It provides a method to retrive the area's owner title and a short description
  * This is used by {@link NSWDPC\Elemental\Extensions\ModelAdmin\MoveElementExtension}
  * to provide some context for an editor selecting the target elemental area
- * @author James
+ *
+ * @property ElementalArea|ElementalAreaOwnerExtension $owner
  */
 class ElementalAreaOwnerExtension extends Extension
 {

@@ -19,7 +19,8 @@ use SilverStripe\ORM\DB;
  * If it can, it will add a dropdown field to the element
  * enabling selection of another area
  * Areas not available are filtered out - e.g those attached to classes that no longer exist
- * @author James
+ *
+ * @property MoveElementExtension $owner
  */
 class MoveElementExtension extends DataExtension
 {

@@ -3,7 +3,6 @@
 namespace NSWDPC\Elemental;
 
 use DNADesign\Elemental\Models\BaseElement;
-use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Core\ClassInfo;
@@ -17,7 +16,6 @@ use SilverStripe\Forms\GridField\GridFieldImportButton;
 use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Forms\GridField\GridFieldFilterHeader;
-use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 use SilverStripe\Core\Config\Config;

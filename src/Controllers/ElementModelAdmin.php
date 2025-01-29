@@ -26,7 +26,7 @@ use SilverStripe\ORM\DataObject;
 
 /**
  * An Elemental model administration area
- * @author James
+ *
  */
 class ElementalAdmin extends ModelAdmin
 {

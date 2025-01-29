@@ -1,5 +1,5 @@
 {
-    "name": "nswdpc/silverstripe-elemental-modeladmin",
+    "name": "sunnysideup/silverstripe-elemental-modeladmin",
     "description": "An administration module for elemental content blocks",
     "type": "silverstripe-vendormodule",
     "keywords": [

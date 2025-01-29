@@ -3,7 +3,6 @@
 namespace NSWDPC\Elemental;
 
 use DNADesign\Elemental\Models\BaseElement;
-use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Core\ClassInfo;
@@ -17,11 +16,10 @@ use SilverStripe\Forms\GridField\GridFieldImportButton;
 use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Forms\GridField\GridFieldFilterHeader;
-use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\Form;
 use SilverStripe\ORM\DataObject;
 
 /**
@@ -34,14 +32,13 @@ class ElementalAdmin extends ModelAdmin
      * @var array
      */
     private static $managed_models = [
-        BaseElement::class
+        BaseElement::class,
     ];
 
     /**
      * @var array
      */
-    private static $excluded_managed_models = [
-    ];
+    private static $excluded_managed_models = [];
 
     /**
      * @var string
@@ -73,7 +70,7 @@ class ElementalAdmin extends ModelAdmin
         }
 
         if (class_exists(ElementVirtual::class)) {
-            $list = $list->exclude(["ClassName" => ElementVirtual::class ]);
+            $list = $list->exclude(["ClassName" => ElementVirtual::class]);
         }
 
         return $list;
@@ -87,34 +84,42 @@ class ElementalAdmin extends ModelAdmin
         Config::modify()->set(static::class, 'managed_models', $list);
         $excluded = Config::inst()->get(static::class, 'excluded_managed_models');
         $list = parent::getManagedModels();
-        foreach($list as $key => $values) {
+        foreach ($list as $key => $values) {
             $remove = false;
-            if(in_array($values['dataClass'], $excluded)) {
+            if (in_array($values['dataClass'], $excluded)) {
                 $remove = true;
             }
-            if(class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
+            if (class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
                 $remove = true;
             }
             $obj = Injector::inst()->get($values['dataClass']);
-            if(! $obj->canCreate()) {
+            if (! $obj->canCreate()) {
                 $remove = true;
             }
 
             $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
-            if($count < 1) {
+            if ($count < 1) {
                 $remove = true;
             } else {
                 $list[$key]['title'] .= ' (' . $count . ')';
             }
-            if($remove) {
+            if ($remove) {
                 unset($list[$key]);
                 continue;
             }
             $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
             $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
-            if(!$list[$key]['title']) {
+            if (!$list[$key]['title']) {
                 $list[$key]['title'] = 'Blocks / Columns';
             }
+        }
+        if (empty($list)) {
+            $list = [
+                [
+                    'title' => 'No blocks available',
+                    'dataClass' => BaseElement::class
+                ]
+            ];
         }
         return $list;
     }
@@ -128,44 +133,53 @@ class ElementalAdmin extends ModelAdmin
     {
         $form = parent::getEditForm($id, $fields);
         $gf = $form->Fields()->dataFieldByName($this->sanitiseClassName($this->modelClass));
-
-        $paging = $gf->getConfig()->getComponentByType(GridFieldPaginator::class);
-        if ($paging) {
-            $paging->setItemsPerPage(10);
-        }
-
-        $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
-        if ($dc) {
-            $display_fields = [
-                'ID' => _t('ElementalModelAdmin.NUM', '#'),
-                'Title' => _t('ElementalModelAdmin.TITLE', 'Title'),
-                'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT', 'Context'),
-                'Type' => _t('ElementalModelAdmin.TYPE', 'Type'),
-                'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED', 'Edited'),
-                'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
-                'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
-                'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
-            ];
-            if(class_exists(ElementVirtual::class)) {
-                // This field is provided by ElementVirtual component
-                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
+        if (!$gf) {
+            foreach ($form->Fields() as $field) {
+                if ($field instanceof GridField) {
+                    $gf = $field;
+                    break;
+                }
             }
-            $dc->setDisplayFields($display_fields);
         }
+        if ($gf) {
 
-        $gf->getConfig()
-            ->removeComponentsByType([
-                GridFieldOrderableRows::class,// no ordering allowed
-                GridFieldDeleteAction::class,// do not allow delete
-                GridFieldAddNewButton::class,// do not allow adding new elements
-                GridFieldImportButton::class,
-                GridFieldExportButton::class,
-                GridFieldPrintButton::class
-            ]);
+            $paging = $gf->getConfig()->getComponentByType(GridFieldPaginator::class);
+            if ($paging) {
+                $paging->setItemsPerPage(10);
+            }
 
-        // Apply the block type filter header, added in ElementSearchExtension
-        $this->applyBlockTypeFilter($gf);
+            $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
+            if ($dc) {
+                $display_fields = [
+                    'ID' => _t('ElementalModelAdmin.NUM', '#'),
+                    'Title' => _t('ElementalModelAdmin.TITLE', 'Title'),
+                    'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT', 'Context'),
+                    'Type' => _t('ElementalModelAdmin.TYPE', 'Type'),
+                    'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED', 'Edited'),
+                    'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
+                    'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
+                    'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
+                ];
+                if (class_exists(ElementVirtual::class)) {
+                    // This field is provided by ElementVirtual component
+                    $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
+                }
+                $dc->setDisplayFields($display_fields);
+            }
 
+            $gf->getConfig()
+                ->removeComponentsByType([
+                    GridFieldOrderableRows::class, // no ordering allowed
+                    GridFieldDeleteAction::class, // do not allow delete
+                    GridFieldAddNewButton::class, // do not allow adding new elements
+                    GridFieldImportButton::class,
+                    GridFieldExportButton::class,
+                    GridFieldPrintButton::class
+                ]);
+
+            // Apply the block type filter header, added in ElementSearchExtension
+            $this->applyBlockTypeFilter($gf);
+        }
         return $form;
     }
 
@@ -182,12 +196,12 @@ class ElementalAdmin extends ModelAdmin
         $filterHeader = $gfConfig->getComponentByType(GridFieldFilterHeader::class);
         $searchContext = $filterHeader->getSearchContext($gf);
         $fields = $searchContext->getFields();
-        if($fields) {
+        if ($fields) {
             $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
             $filterSource = [];
-            foreach($sourceBlockTypes as $k => $className) {
+            foreach ($sourceBlockTypes as $k => $className) {
                 $inst = Injector::inst()->get($className);
-                $filterSource[ $className  ] = $inst->getType();
+                $filterSource[$className] = $inst->getType();
             }
             asort($filterSource);
             $fields->push(

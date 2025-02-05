@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Elemental\Extensions\ModelAdmin;
+namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
 use SilverStripe\Core\Extension;
 

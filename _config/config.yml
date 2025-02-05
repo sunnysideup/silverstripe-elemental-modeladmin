@@ -8,8 +8,8 @@ Name: nswdpc-elemental-modeladmin-extensions
 ---
 DNADesign\Elemental\Models\BaseElement:
   extensions:
+    - 'NSWDPC\Elemental\Extensions\ModelAdmin\MoveElementExtension'
     - 'NSWDPC\Elemental\Extensions\ModelAdmin\ElementSearchExtension'
-
 DNADesign\Elemental\Models\ElementalArea:
   extensions:
     - 'NSWDPC\Elemental\Extensions\ModelAdmin\ElementalAreaOwnerExtension'

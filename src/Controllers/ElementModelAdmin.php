@@ -1,6 +1,6 @@
 <?php
 
-namespace NSWDPC\Elemental;
+namespace NSWDPC\Elemental\ModelAdmin\Controllers;
 
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
@@ -26,7 +26,7 @@ use SilverStripe\ORM\DataObject;
  * An Elemental model administration area
  *
  */
-class ElementalAdmin extends ModelAdmin
+class ElementModelAdmin extends ModelAdmin
 {
     /**
      * @var array

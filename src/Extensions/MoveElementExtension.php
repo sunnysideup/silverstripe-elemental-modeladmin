@@ -1,9 +1,9 @@
 <?php
 
-namespace NSWDPC\Elemental\Extensions\ModelAdmin;
+namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
 use DNADesign\Elemental\Models\ElementalArea;
-use NSWDPC\Elemental\ElementalAdmin;
+use NSWDPC\Elemental\ModelAdmin\Controllers\ElementModelAdmin;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
@@ -31,11 +31,11 @@ class MoveElementExtension extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
         // these fields are only exposed in the ModelAdmin
-        if (get_class(Controller::curr()) != ElementalAdmin::class) {
+        if (get_class(Controller::curr()) != ElementModelAdmin::class) {
             return;
         }
 
-        $areas = $this->owner->getApplicableElementalAreas();
+        $areas = $this->owner->getApplicableElementalAreas(false);
         if (!$areas || $areas->count() == 0) {
             return;
         }
@@ -44,7 +44,13 @@ class MoveElementExtension extends DataExtension
             'ParentID',
             _t('ElementalModelAdmin.MOVE_TO_AREA', 'Move this block'),
             $areas->map('ID', 'OwnerTitleAndDescription')
-        )->setEmptyString('');
+        )->setEmptyString('')
+        ->setRightTitle(
+            _t(
+                'ElementalModelAdmin.EMPTY_AREA_CHANGE_INFO',
+                'Choosing an empty value will orphan this record. To re-link it, choose the relevant record from the list.'
+            )
+        );
 
         $area = $this->owner->Parent();
         if ($area instanceof ElementalArea) {
@@ -52,9 +58,10 @@ class MoveElementExtension extends DataExtension
             $field->setDescription(
                 _t(
                     'ElementalModelAdmin.CURRENT_AREA',
-                    'Choose a new owner. This block is currently associated with \'<em>{description}</em>\'',
+                    'Choose a record to move this block to.'
+                    . ' This block is currently associated with \'<em>{description}</em>\'',
                     [
-                        'description' => $description
+                        'description' => htmlspecialchars($description)
                     ]
                 )
             );
@@ -70,7 +77,7 @@ class MoveElementExtension extends DataExtension
     public function getAreaOwnerClasses() : array
     {
         $classes = [];
-        if ($list = DB::Query("SELECT `OwnerClassName` FROM `ElementalArea` GROUP BY `OwnerClassName`")) {
+        if ($list = DB::Query("SELECT \"OwnerClassName\" FROM \"ElementalArea\" GROUP BY \"OwnerClassName\"")) {
             foreach ($list as $record) {
                 $classes[] = $record['OwnerClassName'];
             }

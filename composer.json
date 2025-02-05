@@ -12,7 +12,6 @@
     "authors": [
         {
             "name": "James",
-            "homepage": "https://dpc.nsw.gov.au",
             "role": "Developer"
         }
     ],
@@ -23,5 +22,15 @@
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "friendsofphp/php-cs-fixer": "^3"
+    },
+    "autoload": {
+        "psr-4": {
+            "NSWDPC\\Elemental\\ModelAdmin\\": [
+                "src/"
+            ],
+            "NSWDPC\\Elemental\\ModelAdmin\\Tests\\": [
+                "tests/"
+            ]
+        }
     }
 }

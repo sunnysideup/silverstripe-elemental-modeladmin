@@ -2,11 +2,14 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
+use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
 use NSWDPC\Elemental\ModelAdmin\Controllers\ElementModelAdmin;
+use Page;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Extension;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\DropdownField;
@@ -20,9 +23,9 @@ use SilverStripe\ORM\DB;
  * enabling selection of another area
  * Areas not available are filtered out - e.g those attached to classes that no longer exist
  *
- * @property MoveElementExtension $owner
+ * @property BaseElement|MoveElementExtension $owner
  */
-class MoveElementExtension extends DataExtension
+class MoveElementExtension extends Extension
 {
 
     /**
@@ -45,12 +48,12 @@ class MoveElementExtension extends DataExtension
             _t('ElementalModelAdmin.MOVE_TO_AREA', 'Move this block'),
             $areas->map('ID', 'OwnerTitleAndDescription')
         )->setEmptyString('')
-        ->setRightTitle(
-            _t(
-                'ElementalModelAdmin.EMPTY_AREA_CHANGE_INFO',
-                'Choosing an empty value will orphan this record. To re-link it, choose the relevant record from the list.'
-            )
-        );
+            ->setRightTitle(
+                _t(
+                    'ElementalModelAdmin.EMPTY_AREA_CHANGE_INFO',
+                    'Choosing an empty value will orphan this record. To re-link it, choose the relevant record from the list.'
+                )
+            );
 
         $area = $this->owner->Parent();
         if ($area instanceof ElementalArea) {
@@ -59,7 +62,7 @@ class MoveElementExtension extends DataExtension
                 _t(
                     'ElementalModelAdmin.CURRENT_AREA',
                     'Choose a record to move this block to.'
-                    . ' This block is currently associated with \'<em>{description}</em>\'',
+                        . ' This block is currently associated with \'<em>{description}</em>\'',
                     [
                         'description' => htmlspecialchars($description)
                     ]
@@ -74,7 +77,7 @@ class MoveElementExtension extends DataExtension
      * Retrieve all available owner classes
      * @return array
      */
-    public function getAreaOwnerClasses() : array
+    public function getAreaOwnerClasses(): array
     {
         $classes = [];
         if ($list = DB::Query("SELECT \"OwnerClassName\" FROM \"ElementalArea\" GROUP BY \"OwnerClassName\"")) {
@@ -89,14 +92,14 @@ class MoveElementExtension extends DataExtension
      * Get all possible element relations
      * @return array
      */
-    public function getElementalAreaRelations() : array
+    public function getElementalAreaRelations(): array
     {
         $relations = [];
-        $relations[] = "ElementalArea";// default
+        $relations[] = "ElementalArea"; // default
 
         $classes = $this->owner->config()->get('supported_parent_classes');
         if (empty($classes) || !is_array($classes)) {
-            $classes = [\Page::class];
+            $classes = [Page::class];
         }
 
         $sourceClasses = ClassInfo::subclassesFor(ElementalArea::class, true);
@@ -170,11 +173,11 @@ class MoveElementExtension extends DataExtension
         $area_ids = array_unique($area_ids);
         if (!empty($area_ids)) {
             $list = ElementalArea::get()
-                        ->filter(['ID' => $area_ids])
-                        ->sort('LastEdited DESC');
+                ->filter(['ID' => $area_ids])
+                ->sort('LastEdited DESC');
             if ($exclude_current) {
                 // exclude the current element's area
-                $list = $list->exclude([ 'ID' => $this->owner->ParentID ]);
+                $list = $list->exclude(['ID' => $this->owner->ParentID]);
             }
             return $list;
         } else {

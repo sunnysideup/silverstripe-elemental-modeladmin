@@ -2,6 +2,8 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
+use DNADesign\Elemental\Models\BaseElement;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\ORM\DataExtension;
 
@@ -10,7 +12,7 @@ use SilverStripe\ORM\DataExtension;
  *
  * @property BaseElement|ElementSearchExtension $owner
  */
-class ElementSearchExtension extends DataExtension
+class ElementSearchExtension extends Extension
 {
     public function updateSearchableFields(&$fields)
     {
@@ -18,14 +20,14 @@ class ElementSearchExtension extends DataExtension
         if (isset($fields['Title'])) {
             $orderedFields['Title'] = $fields['Title'];
         }
-        foreach ($fields as $k=>$v) {
+        foreach ($fields as $k => $v) {
             if ($k === "Title") {
                 continue;
             }
-            if($k === 'LastEdited') {
+            if ($k === 'LastEdited') {
                 continue;
             }
-            $orderedFields[ $k ] = $fields[ $k ];
+            $orderedFields[$k] = $fields[$k];
         }
 
         /**
@@ -33,9 +35,9 @@ class ElementSearchExtension extends DataExtension
          * The source values are populated in the modeladmin GridFieldFilterHeader
          */
         $orderedFields['ClassName'] = [
-           'title' => _t('ElementalModelAdmin.BLOCK_TYPE', 'Content block type'),
-           'field' => DropdownField::class,
-           'filter' => 'ExactMatchFilter',
+            'title' => _t('ElementalModelAdmin.BLOCK_TYPE', 'Content block type'),
+            'field' => DropdownField::class,
+            'filter' => 'ExactMatchFilter',
         ];
         $fields = $orderedFields;
     }

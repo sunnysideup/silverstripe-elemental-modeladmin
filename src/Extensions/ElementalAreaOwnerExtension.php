@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
+use DNADesign\Elemental\Models\ElementalArea;
 use SilverStripe\Core\Extension;
 
 /**
@@ -23,11 +24,11 @@ class ElementalAreaOwnerExtension extends Extension
      * If the owner 'page' exists, provide a short title with context
      * @return string
      */
-    public function OwnerTitleAndDescription() : string
+    public function OwnerTitleAndDescription(): string
     {
         return $this->getOwnerTitleAndDescription();
     }
-    public function getOwnerTitleAndDescription() : string
+    public function getOwnerTitleAndDescription(): string
     {
         $title = '';
 

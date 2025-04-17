@@ -2,7 +2,7 @@
 Name: nswdpc-elemental-modeladmin
 ---
 NSWDPC\Elemental\ElementalAdmin:
-  default_sort: 'LastEdited DESC'
+  default_sort: "LastEdited DESC"
 ---
 Name: nswdpc-elemental-modeladmin-extensions
 ---
@@ -13,3 +13,10 @@ DNADesign\Elemental\Models\BaseElement:
 DNADesign\Elemental\Models\ElementalArea:
   extensions:
     - 'NSWDPC\Elemental\ModelAdmin\Extensions\ElementalAreaOwnerExtension'
+
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.MoveElementExtension:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "MoveElementExtension"
+      defaultLifetime: 3600

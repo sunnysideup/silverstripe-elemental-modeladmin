@@ -48,8 +48,8 @@ class ElementSearchExtension extends Extension
     public function OwnerTitleAndDescription()
     {
         $owner = $this->getOwner();
-        $page = $owner->getPage() ?: $this;
-        $parent = $owner->Parent() ?: $this;
+        $page = $owner->getPage() ?: $owner;
+        $parent = $owner->Parent() ?: $owner;
         $elementalArea = $owner->Parent();
         // if the ElementalArea has a ContextTitle .. use that
         if ($elementalArea && $elementalArea->hasMethod('ContextTitle')) {

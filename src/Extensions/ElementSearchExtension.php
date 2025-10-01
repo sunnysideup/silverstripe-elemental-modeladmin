@@ -112,7 +112,7 @@ class ElementSearchExtension extends Extension
                         </svg>
                         </a>
                         <div style="display: none; margin-top: 1em;">
-                            <h1>Your current location:</h1>
+                            <h1>Current location</h1>
                         ' . $owner->OwnerTitleAndDescription() .
                         '</div>
                     </section>'

@@ -68,10 +68,11 @@ class ElementSearchExtension extends Extension
         $siblings = BaseElement::get()->filter(['ParentID' => $owner->ParentID]);
         $array = [];
         foreach ($siblings as $sibling) {
+            $title = $sibling->Title ?: 'Untitled Block #' . $sibling->ID;
             if ($sibling->ID === $owner->ID) {
-                $array[] = '<div style="padding-left: 2em;"><strong>&raquo; ' . $owner->Title . ' (this block) </strong></div>';
+                $array[] = '<div style="padding-left: 2em;"><strong>&raquo; ' . $title . ' (this block) </strong></div>';
             } else {
-                $array[] = '<div style="padding-left: 2em;">- <a href="' . $sibling->CMSEditLink(true) . '">' . ($sibling->Title ?: '#' . $owner->ID) . '</a></div>';
+                $array[] = '<div style="padding-left: 2em;">- <a href="' . $sibling->CMSEditLink(true) . '">' . $title . '</a></div>';
             }
         }
 
@@ -87,13 +88,34 @@ class ElementSearchExtension extends Extension
         $owner = $this->getOwner();
         $curr = Controller::curr();
         if (get_class($curr) !== ElementalAreaController::class) {
+            $id = 'nav-' . rand(0, 9999999);
             $fields->push(
                 LiteralField::create(
                     'MyPageTitle',
-                    '<hr style="margin-top: 150px;"/>
-                    <h3 style="font-weight: bold; font-size: 16px;">Navigation Help</h3>
-                    ' .
-                        $owner->OwnerTitleAndDescription()
+                    '
+                    <section>
+                        <a href="#' . $id . '" onclick="const d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\'; if(d.style.display===\'block\'){d.scrollIntoView({behavior:\'smooth\'});}return false;" style="float: right;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title desc" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
+                        <title id="title">Where am I / Navigation</title>
+
+                        <!-- target circle -->
+                        <circle cx="12" cy="12" r="8.5"/>
+
+                        <!-- crosshair ticks -->
+                        <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/>
+
+                        <!-- compass needle (rotated diamond) -->
+                        <path d="M12 4.5l3 7.5-3 7.5-3-7.5z" fill="currentColor" stroke="none" transform="rotate(30 12 12)"/>
+
+                        <!-- center dot -->
+                        <circle cx="12" cy="12" r="1.25" fill="currentColor" stroke="none"/>
+                        </svg>
+                        </a>
+                        <div style="display: none; margin-top: 1em;">
+                            <h1>Your current location:</h1>
+                        ' . $owner->OwnerTitleAndDescription() .
+                        '</div>
+                    </section>'
                 )
             );
         }

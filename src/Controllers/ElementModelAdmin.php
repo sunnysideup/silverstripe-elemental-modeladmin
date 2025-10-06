@@ -78,9 +78,10 @@ class ElementModelAdmin extends ModelAdmin
 
     public function getManagedModels()
     {
-        $list =
-            Config::inst()->get(static::class, 'managed_models')
-            + array_values(ClassInfo::subclassesFor(BaseElement::class, false));
+        $list = array_merge(
+            Config::inst()->get(static::class, 'managed_models'),
+            array_values(ClassInfo::subclassesFor(BaseElement::class, false))
+        );
         Config::modify()->set(static::class, 'managed_models', $list);
         $excluded = Config::inst()->get(static::class, 'excluded_managed_models');
         $list = parent::getManagedModels();
@@ -92,10 +93,10 @@ class ElementModelAdmin extends ModelAdmin
             if (class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
                 $remove = true;
             }
-            $obj = Injector::inst()->get($values['dataClass']);
-            if (! $obj->canCreate()) {
-                $remove = true;
-            }
+            // $obj = Injector::inst()->get($values['dataClass']);
+            // if (! $obj->canCreate()) {
+            //     $remove = true;
+            // }
 
             $count = DataObject::singleton($values['dataClass'])->get()->filter(['ClassName' => $values['dataClass']])->count();
             if ($count < 1) {
@@ -108,9 +109,10 @@ class ElementModelAdmin extends ModelAdmin
                 continue;
             }
             $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+            $before = $list[$key]['title'];
             $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
             if (!$list[$key]['title']) {
-                $list[$key]['title'] = 'Blocks / Columns';
+                $list[$key]['title'] = $before;
             }
         }
         if (empty($list)) {

@@ -152,21 +152,18 @@ class ElementModelAdmin extends ModelAdmin
 
             $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
             if ($dc) {
-                $display_fields = [
-                    'ID' => _t('ElementalModelAdmin.NUM', '#'),
+                $obj = Injector::inst()->get($this->modelClass);
+                $summaryFields = $obj->SummaryFields();
+                $displayFields = [
                     'Title' => _t('ElementalModelAdmin.TITLE', 'Title'),
                     'Parent.OwnerTitleAndDescription' => _t('ElementalModelAdmin.CONTEXT', 'Context'),
-                    'Type' => _t('ElementalModelAdmin.TYPE', 'Type'),
-                    'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED', 'Edited'),
-                    'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
-                    'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
-                    'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
                 ];
+                $displayFields = array_merge($displayFields, $summaryFields);
                 if (class_exists(ElementVirtual::class)) {
                     // This field is provided by ElementVirtual component
-                    $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
+                    $displayFields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
                 }
-                $dc->setDisplayFields($display_fields);
+                $dc->setDisplayFields($displayFields);
             }
 
             $gf->getConfig()

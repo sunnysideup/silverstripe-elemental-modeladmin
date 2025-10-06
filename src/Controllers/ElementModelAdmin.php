@@ -55,6 +55,9 @@ class ElementModelAdmin extends ModelAdmin
      */
     private static $url_segment = 'blocks-admin';
 
+
+    private static $meaningless_words = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available
      * @return DataList
@@ -108,9 +111,9 @@ class ElementModelAdmin extends ModelAdmin
                 unset($list[$key]);
                 continue;
             }
-            $meaninglessWords = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+            $meaninglessWords = $this->config()->get('meaningless_words');
             $before = $list[$key]['title'];
-            $list[$key]['title'] = trim(str_replace($meaninglessWords, '', $list[$key]['title']));
+            $list[$key]['title'] = trim(str_ireplace($meaninglessWords, '', $list[$key]['title']));
             if (!$list[$key]['title']) {
                 $list[$key]['title'] = $before;
             }

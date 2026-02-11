@@ -19,6 +19,7 @@ use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Forms\GridField\GridFieldImportButton;
 use SilverStripe\Forms\GridField\GridFieldPaginator;
 use SilverStripe\Forms\GridField\GridFieldPrintButton;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
@@ -62,9 +63,10 @@ class ElementModelAdmin extends ModelAdmin
      */
     public function getList()
     {
+        $sort = (string) $this->config()->get('default_sort') ?: static::$default_sort;
         $list = parent::getList();
         $list = $list->exclude(['ClassName:not' => $this->modelClass]);
-        $list = $sort = $this->config()->get('default_sort') ? $list->sort($sort) : $list->sort('LastEdited DESC');
+        $list = $list->orderBy($sort);
 
         if (class_exists(ElementVirtual::class)) {
             $list = $list->exclude(['ClassName' => ElementVirtual::class]);

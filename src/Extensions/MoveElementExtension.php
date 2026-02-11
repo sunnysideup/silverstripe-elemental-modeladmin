@@ -13,11 +13,9 @@ use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Extension;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\DB;
 
 /**
  * This extension is applied to {@link DNADesign\Elemental\Models\BaseElement}
@@ -29,7 +27,6 @@ use SilverStripe\ORM\DB;
  */
 class MoveElementExtension extends Extension
 {
-
     /**
      * Add a parent selection field to the CMS fields, if any exist
      */
@@ -41,7 +38,7 @@ class MoveElementExtension extends Extension
         }
 
         $areas = $this->owner->getApplicableElementalAreas(false);
-        if (!$areas || count($areas) === 0) {
+        if (! $areas || count($areas) === 0) {
             return;
         }
 
@@ -66,7 +63,7 @@ class MoveElementExtension extends Extension
                     'Choose a record to move this block to.'
                         . ' This block is currently associated with \'<em>{description}</em>\'',
                     [
-                        'description' => htmlspecialchars($description)
+                        'description' => htmlspecialchars($description),
                     ]
                 )
             );
@@ -77,7 +74,6 @@ class MoveElementExtension extends Extension
 
     /**
      * Retrieve all available owner classes
-     * @return array
      */
     public function getAreaOwnerClasses(): array
     {
@@ -87,12 +83,11 @@ class MoveElementExtension extends Extension
 
     /**
      * Get all possible element relations
-     * @return array
      */
     public function getElementalAreaRelations(): array
     {
         $classes = $this->getAreaOwnerClasses();
-        if (empty($classes) || !is_array($classes)) {
+        if ($classes === [] || ! is_array($classes)) {
             $classes = [Page::class];
         }
 
@@ -104,7 +99,7 @@ class MoveElementExtension extends Extension
         foreach ($classes as $class) {
             // Use Config::forClass() for better performance
             $has_one = Config::forClass($class)->get('has_one');
-            if (!is_array($has_one) || empty($has_one)) {
+            if (! is_array($has_one) || $has_one === []) {
                 continue;
             }
 
@@ -114,7 +109,7 @@ class MoveElementExtension extends Extension
                     if (! isset($allRelations[$class])) {
                         $allRelations[$class] = [];
                     }
-                    $allRelations[$class][] = $relationName . "ID";
+                    $allRelations[$class][] = $relationName . 'ID';
                 }
             }
         }
@@ -157,6 +152,7 @@ class MoveElementExtension extends Extension
 
         return $list;
     }
+
     /**
      * Retrieve all applicable elemental areas
      */
@@ -173,14 +169,14 @@ class MoveElementExtension extends Extension
              * avoid returning the IDs for these areas
              * this could occur if a module was removed
              */
-            if (!$inst || !($inst instanceof DataObject)) {
+            if (! $inst || ! ($inst instanceof DataObject)) {
                 continue;
             }
             foreach ($fields as $field) {
                 $myIds = $class::get()
                     ->columnUnique($field);
                 $myIds = array_filter($myIds);
-                if (!empty($myIds)) {
+                if ($myIds !== []) {
                     $ids = array_merge($ids, $myIds);
                 }
             }
@@ -188,7 +184,7 @@ class MoveElementExtension extends Extension
 
         // grab a uniq list of ElementArea.ID values
         $ids = array_unique($ids);
-        if (!empty($ids)) {
+        if ($ids !== []) {
             $list = ElementalArea::get()
                 ->filter(['ID' => $ids])
                 ->sort('LastEdited DESC');

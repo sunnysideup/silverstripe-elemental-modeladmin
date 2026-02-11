@@ -6,25 +6,24 @@ use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
-use SilverStripe\Forms\GridField\GridFieldPaginator;
-use SilverStripe\Forms\GridField\GridFieldAddNewButton;
-use SilverStripe\Forms\GridField\GridFieldImportButton;
-use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Forms\GridField\GridFieldFilterHeader;
-use SilverStripe\Core\Injector\Injector;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\Form;
+use SilverStripe\Forms\GridField\GridFieldImportButton;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
+use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\ORM\DataObject;
+use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
  * An Elemental model administration area
- *
  */
 class ElementModelAdmin extends ModelAdmin
 {
@@ -43,7 +42,7 @@ class ElementModelAdmin extends ModelAdmin
     /**
      * @var string
      */
-    private static $default_sort = "LastEdited DESC";
+    private static $default_sort = 'LastEdited DESC';
 
     /**
      * @var string
@@ -55,7 +54,6 @@ class ElementModelAdmin extends ModelAdmin
      */
     private static $url_segment = 'blocks-admin';
 
-
     private static $meaningless_words = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
 
     /**
@@ -66,14 +64,10 @@ class ElementModelAdmin extends ModelAdmin
     {
         $list = parent::getList();
         $list = $list->exclude(['ClassName:not' => $this->modelClass]);
-        if ($sort = $this->config()->get('default_sort')) {
-            $list = $list->sort($sort);
-        } else {
-            $list = $list->sort("LastEdited DESC");
-        }
+        $list = $sort = $this->config()->get('default_sort') ? $list->sort($sort) : $list->sort('LastEdited DESC');
 
         if (class_exists(ElementVirtual::class)) {
-            $list = $list->exclude(["ClassName" => ElementVirtual::class]);
+            $list = $list->exclude(['ClassName' => ElementVirtual::class]);
         }
 
         return $list;
@@ -114,7 +108,7 @@ class ElementModelAdmin extends ModelAdmin
             $meaninglessWords = $this->config()->get('meaningless_words');
             $before = $list[$key]['title'];
             $list[$key]['title'] = trim(str_ireplace($meaninglessWords, '', $list[$key]['title']));
-            if (!$list[$key]['title']) {
+            if ($list[$key]['title'] === '' || $list[$key]['title'] === '0') {
                 $list[$key]['title'] = $before;
             }
         }
@@ -122,13 +116,12 @@ class ElementModelAdmin extends ModelAdmin
             $list = [
                 [
                     'title' => 'No blocks available',
-                    'dataClass' => BaseElement::class
-                ]
+                    'dataClass' => BaseElement::class,
+                ],
             ];
         }
         return $list;
     }
-
 
     /**
      * Return the GridField form listing elements
@@ -138,7 +131,7 @@ class ElementModelAdmin extends ModelAdmin
     {
         $form = parent::getEditForm($id, $fields);
         $gf = $form->Fields()->dataFieldByName($this->sanitiseClassName($this->modelClass));
-        if (!$gf) {
+        if (! $gf) {
             foreach ($form->Fields() as $field) {
                 if ($field instanceof GridField) {
                     $gf = $field;
@@ -176,7 +169,7 @@ class ElementModelAdmin extends ModelAdmin
                     GridFieldAddNewButton::class, // do not allow adding new elements
                     GridFieldImportButton::class,
                     GridFieldExportButton::class,
-                    GridFieldPrintButton::class
+                    GridFieldPrintButton::class,
                 ]);
 
             // Apply the block type filter header, added in ElementSearchExtension
@@ -188,7 +181,6 @@ class ElementModelAdmin extends ModelAdmin
     /**
      * Apply a block type filter to the search context
      * @param $gf GridField with a filter header
-     * @return void
      */
     protected function applyBlockTypeFilter(GridField &$gf)
     {
@@ -201,7 +193,7 @@ class ElementModelAdmin extends ModelAdmin
         if ($fields) {
             $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
             $filterSource = [];
-            foreach ($sourceBlockTypes as $k => $className) {
+            foreach ($sourceBlockTypes as $className) {
                 $inst = Injector::inst()->get($className);
                 $filterSource[$className] = $inst->getType();
             }

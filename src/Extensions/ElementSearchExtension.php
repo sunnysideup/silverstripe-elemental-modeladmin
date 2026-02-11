@@ -2,11 +2,11 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
+use DNADesign\Elemental\Controllers\ElementalAreaController;
 use DNADesign\Elemental\Models\BaseElement;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\DropdownField;
-use DNADesign\Elemental\Controllers\ElementalAreaController;
-use SilverStripe\Control\Controller;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\LiteralField;
 
@@ -24,7 +24,7 @@ class ElementSearchExtension extends Extension
             $orderedFields['Title'] = $fields['Title'];
         }
         foreach ($fields as $k => $v) {
-            if ($k === "Title") {
+            if ($k === 'Title') {
                 continue;
             }
             if ($k === 'LastEdited') {

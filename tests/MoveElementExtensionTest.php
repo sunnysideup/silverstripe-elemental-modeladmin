@@ -2,23 +2,21 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Tests;
 
-use SilverStripe\Dev\SapphireTest;
 use DNADesign\Elemental\Models\BaseElement;
-use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\Elemental\Models\ElementalArea;
+use DNADesign\Elemental\Models\ElementContent;
+use SilverStripe\Dev\SapphireTest;
 
 /**
  * Test moving an element
  * @author James
  */
-class MoveElementExtensionTest extends SapphireTest {
-
-    /**
-     * @inheritdoc
-     */
+class MoveElementExtensionTest extends SapphireTest
+{
     protected $usesDatabase = true;
 
-    public function testMoveElement() {
+    public function testMoveElement()
+    {
 
         // Create two ElementalAreas
         $sourceArea = ElementalArea::create();
@@ -41,7 +39,7 @@ class MoveElementExtensionTest extends SapphireTest {
 
         // Create a BaseElement and assign it to the source area
         $element = ElementContent::create();
-        $element->Title = "Test element";
+        $element->Title = 'Test element';
         $element->ParentID = $sourceArea->ID;
         $element->write();
 

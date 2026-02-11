@@ -93,7 +93,12 @@ class ElementSearchExtension extends Extension
                 LiteralField::create(
                     'MyPageTitle',
                     '
-                    <section>
+                    <section style="
+                        display: flex;
+                        flex-direction: row-reverse;
+                        justify-content: flex-start;
+                        gap: 2rem;
+                    ">
                         <a href="#' . $id . '" onclick="const d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\'; if(d.style.display===\'block\'){d.scrollIntoView({behavior:\'smooth\'});}return false;" style="float: right; display: block; margin-left: 1em; text-decoration: none;" title="Show / hide current location in site structure">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title desc" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="24" height="24">
                         <title id="title">Where am I / Navigation</title>
@@ -111,8 +116,12 @@ class ElementSearchExtension extends Extension
                         <circle cx="12" cy="12" r="1.25" fill="currentColor" stroke="none"/>
                         </svg>
                         </a>
-                        <div style="display: none; margin-top: 1em; clear: both;">
-                            <h1>Current location</h1>
+                        <div style="
+                            display: none;
+                            padding: 2rem;
+                            border-radius: 1.22rem;
+                            border: 1px solid #0071c4;
+                        ">
                         ' . $owner->OwnerTitleAndDescription() .
                         '</div>
                     </section>'

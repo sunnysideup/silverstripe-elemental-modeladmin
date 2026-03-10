@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "NSWDPC\\Elemental\\": [
+            "NSWDPC\\Elemental\\ModelAdmin": [
                 "src/"
             ],
             "NSWDPC\\Elemental\\ModelAdmin\\Tests\\": [

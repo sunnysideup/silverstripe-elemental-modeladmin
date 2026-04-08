@@ -52,7 +52,6 @@ class ElementModelAdmin extends ModelAdmin
 
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available
-     * @return DataList
      */
     public function getList()
     {
@@ -72,19 +71,37 @@ class ElementModelAdmin extends ModelAdmin
 
     /**
      * Return the GridField form listing elements
-     * @return Form
      */
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
         $gf = $form->Fields()->dataFieldByName($this->sanitiseClassName($this->modelClass));
+        $dc = null;
+        if($gf instanceof GridField) {
 
-        $paging = $gf->getConfig()->getComponentByType(GridFieldPaginator::class);
-        if ($paging) {
-            $paging->setItemsPerPage(10);
+            // Apply the block type filter header, added in ElementSearchExtension
+            $this->applyBlockTypeFilter($gf);
+
+            $gfConfig = $gf->getConfig();
+
+            $gf->getConfig()
+                ->removeComponentsByType([
+                    GridFieldOrderableRows::class,// no ordering allowed
+                    GridFieldDeleteAction::class,// do not allow delete
+                    GridFieldAddNewButton::class,// do not allow adding new elements
+                    GridFieldImportButton::class,
+                    GridFieldExportButton::class,
+                    GridFieldPrintButton::class
+                ]);
+
+            $paging = $gfConfig->getComponentByType(GridFieldPaginator::class);
+            if ($paging) {
+                $paging->setItemsPerPage(10);
+            }
+
+            $dc = $gfConfig->getComponentByType(GridFieldDataColumns::class);
         }
 
-        $dc = $gf->getConfig()->getComponentByType(GridFieldDataColumns::class);
         if ($dc) {
             $display_fields = [
                 'ID' => _t('ElementalModelAdmin.NUM', '#'),
@@ -93,7 +110,6 @@ class ElementModelAdmin extends ModelAdmin
                 'Type' => _t('ElementalModelAdmin.TYPE', 'Type'),
                 'LastEdited.Nice' => _t('ElementalModelAdmin.EDITED', 'Edited'),
                 'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
-                'Type' =>  _t('ElementalModelAdmin.TYPE', 'Type'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
             ];
             if(class_exists(ElementVirtual::class)) {
@@ -102,19 +118,6 @@ class ElementModelAdmin extends ModelAdmin
             }
             $dc->setDisplayFields($display_fields);
         }
-
-        $gf->getConfig()
-            ->removeComponentsByType([
-                GridFieldOrderableRows::class,// no ordering allowed
-                GridFieldDeleteAction::class,// do not allow delete
-                GridFieldAddNewButton::class,// do not allow adding new elements
-                GridFieldImportButton::class,
-                GridFieldExportButton::class,
-                GridFieldPrintButton::class
-            ]);
-
-        // Apply the block type filter header, added in ElementSearchExtension
-        $this->applyBlockTypeFilter($gf);
 
         return $form;
     }

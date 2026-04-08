@@ -127,7 +127,7 @@ class MoveElementExtension extends DataExtension
 
     /**
      * Retrieve all applicable elemental areas
-     * @param bool exclude_current if true, the current element's parent will be excluded from the returned list
+     * @param bool $exclude_current if true, the current element's parent will be excluded from the returned list
      * @return \SilverStripe\ORM\DataList|null
      */
     public function getApplicableElementalAreas(bool $exclude_current = true)

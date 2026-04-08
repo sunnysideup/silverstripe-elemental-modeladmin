@@ -28,39 +28,24 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 class ElementModelAdmin extends ModelAdmin
 {
 
-    /**
-     * @var array
-     */
-    private static $managed_models = [
+    private static array $managed_models = [
         BaseElement::class
     ];
 
-    /**
-     * @var string
-     */
-    private static $default_sort = "LastEdited DESC";
+    private static string $default_sort = "LastEdited DESC";
 
-    /**
-     * @var string
-     */
-    private static $menu_title = 'Elements';
+    private static string $menu_title = 'Elements';
 
-    /**
-     * @var string
-     */
-    private static $url_segment = 'elements-admin';
+    private static string $url_segment = 'elements-admin';
 
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available
      */
+    #[\Override]
     public function getList()
     {
         $list = parent::getList();
-        if ($sort = $this->config()->get('default_sort')) {
-            $list = $list->sort($sort);
-        } else {
-            $list = $list->sort("LastEdited DESC");
-        }
+        $list = $sort = $this->config()->get('default_sort') ? $list->sort($sort) : $list->sort("LastEdited DESC");
 
         if (class_exists(ElementVirtual::class)) {
             $list = $list->exclude(["ClassName" => ElementVirtual::class ]);
@@ -72,6 +57,7 @@ class ElementModelAdmin extends ModelAdmin
     /**
      * Return the GridField form listing elements
      */
+    #[\Override]
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
@@ -116,6 +102,7 @@ class ElementModelAdmin extends ModelAdmin
                 // This field is provided by ElementVirtual component
                 $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL','Global');
             }
+
             $dc->setDisplayFields($display_fields);
         }
 
@@ -136,10 +123,11 @@ class ElementModelAdmin extends ModelAdmin
         if($fields) {
             $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
             $filterSource = [];
-            foreach($sourceBlockTypes as $k => $className) {
+            foreach($sourceBlockTypes as $className) {
                 $inst = Injector::inst()->get( $className );
                 $filterSource[ $className  ] = $inst->getType();
             }
+
             asort($filterSource);
             $fields->push(
                 DropdownField::create(

@@ -18,7 +18,7 @@ class MoveElementExtensionTest extends SapphireTest {
      */
     protected $usesDatabase = true;
 
-    public function testMoveElement() {
+    public function testMoveElement(): void {
 
         // Create two ElementalAreas
         $sourceArea = ElementalArea::create();

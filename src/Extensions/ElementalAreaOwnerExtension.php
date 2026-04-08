@@ -10,34 +10,32 @@ use SilverStripe\Core\Extension;
  * This is used by {@link NSWDPC\Elemental\Extensions\ModelAdmin\MoveElementExtension}
  * to provide some context for an editor selecting the target elemental area
  * @author James
+ * @extends \SilverStripe\Core\Extension<(\DNADesign\Elemental\Models\ElementalArea & static)>
  */
 class ElementalAreaOwnerExtension extends Extension
 {
     /**
      * If the owner 'page' exists, provide a short title with context
-     * @return string
      */
     public function OwnerTitleAndDescription() : string
     {
         $title = '';
 
         // if the ElementalArea has a ContextTitle .. use that
-        if ($this->owner->hasMethod('ContextTitle')) {
-            $areaTitle = $this->owner->ContextTitle();
+        if ($this->getOwner()->hasMethod('ContextTitle')) {
+            $areaTitle = $this->getOwner()->ContextTitle();
         } else {
             $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT', 'Main content');
         }
 
-        if ($ownerPage = $this->owner->getOwnerPage()) {
+        if ($ownerPage = $this->getOwner()->getOwnerPage()) {
             $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . " (#{$ownerPage->ID})";
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?
-            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record') . " (record #" . $this->owner->ID . ")";
+            $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record') . " (record #" . $this->getOwner()->ID . ")";
         }
 
-        $title .= " - {$areaTitle} - #{$this->owner->ID}";
-
-        return $title;
+        return $title . " - {$areaTitle} - #{$this->getOwner()->ID}";
     }
 }

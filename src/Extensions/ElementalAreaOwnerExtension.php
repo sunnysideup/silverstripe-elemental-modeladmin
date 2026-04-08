@@ -22,8 +22,10 @@ class ElementalAreaOwnerExtension extends Extension
         $title = '';
 
         // if the ElementalArea has a ContextTitle .. use that
-        if ($this->getOwner()->hasMethod('ContextTitle')) {
-            $areaTitle = $this->getOwner()->ContextTitle();
+        $owner = $this->getOwner();
+        if ($owner->hasMethod('ContextTitle')) {
+            // @phpstan-ignore method.notFound
+            $areaTitle = $owner->ContextTitle();
         } else {
             $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT', 'Main content');
         }

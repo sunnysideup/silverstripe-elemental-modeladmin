@@ -43,11 +43,7 @@ class ElementModelAdmin extends ModelAdmin
     {
         $list = parent::getList();
         $sort = $this->config()->get('default_sort');
-        if(!is_null($sort)) {
-            $list = $list->sort($sort);
-        } else {
-            $list = $list->sort(["LastEdited" => "DESC"]);
-        }
+        $list = is_null($sort) ? $list->sort(["LastEdited" => "DESC"]) : $list->sort($sort);
 
         if (class_exists(ElementVirtual::class)) {
             $list = $list->exclude(["ClassName" => ElementVirtual::class ]);

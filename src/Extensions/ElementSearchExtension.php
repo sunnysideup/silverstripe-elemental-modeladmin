@@ -33,9 +33,9 @@ class ElementSearchExtension extends DataExtension
          * The source values are populated in the modeladmin GridFieldFilterHeader
          */
         $orderedFields['ClassName'] = [
-           'title' => _t('ElementalModelAdmin.BLOCK_TYPE', 'Content block type'),
-           'field' => DropdownField::class,
-           'filter' => 'ExactMatchFilter',
+            'title' => _t('ElementalModelAdmin.BLOCK_TYPE', 'Content block type'),
+            'field' => DropdownField::class,
+            'filter' => 'ExactMatchFilter',
         ];
         $fields = $orderedFields;
     }

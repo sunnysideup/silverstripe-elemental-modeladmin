@@ -11,14 +11,15 @@ use DNADesign\Elemental\Models\ElementalArea;
  * Test moving an element
  * @author James
  */
-class MoveElementExtensionTest extends SapphireTest {
-
+class MoveElementExtensionTest extends SapphireTest
+{
     /**
      * @inheritdoc
      */
     protected $usesDatabase = true;
 
-    public function testMoveElement(): void {
+    public function testMoveElement(): void
+    {
 
         // Create two ElementalAreas
         $sourceArea = ElementalArea::create();

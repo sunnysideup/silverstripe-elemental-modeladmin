@@ -24,7 +24,6 @@ use SilverStripe\ORM\DB;
  */
 class MoveElementExtension extends DataExtension
 {
-
     /**
      * Add a parent selection field to the CMS fields, if any exist
      */
@@ -74,7 +73,7 @@ class MoveElementExtension extends DataExtension
     /**
      * Retrieve all available owner classes
      */
-    public function getAreaOwnerClasses() : array
+    public function getAreaOwnerClasses(): array
     {
         $classes = [];
         if ($list = DB::Query('SELECT "OwnerClassName" FROM "ElementalArea" GROUP BY "OwnerClassName"')) {
@@ -89,7 +88,7 @@ class MoveElementExtension extends DataExtension
     /**
      * Get all possible element relations
      */
-    public function getElementalAreaRelations() : array
+    public function getElementalAreaRelations(): array
     {
         $relations = [];
         $relations[] = "ElementalArea";// default
@@ -102,7 +101,7 @@ class MoveElementExtension extends DataExtension
         $sourceClasses = ClassInfo::subclassesFor(ElementalArea::class, true);
 
         // filter relations that are an ElementalArea or subclass
-        $filter = (fn($var): bool => in_array($var, $sourceClasses));
+        $filter = (fn ($var): bool => in_array($var, $sourceClasses));
 
         foreach ($classes as $class) {
             $has_one = Config::inst()->get($class, 'has_one');

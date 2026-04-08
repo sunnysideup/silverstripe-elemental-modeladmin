@@ -17,7 +17,7 @@ class ElementalAreaOwnerExtension extends Extension
     /**
      * If the owner 'page' exists, provide a short title with context
      */
-    public function OwnerTitleAndDescription() : string
+    public function OwnerTitleAndDescription(): string
     {
         $title = '';
 

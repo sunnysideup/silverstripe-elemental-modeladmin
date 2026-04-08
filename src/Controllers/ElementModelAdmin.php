@@ -3,7 +3,6 @@
 namespace NSWDPC\Elemental\ModelAdmin\Controllers;
 
 use DNADesign\Elemental\Models\BaseElement;
-use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Core\ClassInfo;
@@ -17,7 +16,6 @@ use SilverStripe\Forms\GridField\GridFieldImportButton;
 use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\Forms\GridField\GridFieldExportButton;
 use SilverStripe\Forms\GridField\GridFieldFilterHeader;
-use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
@@ -27,7 +25,6 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
  */
 class ElementModelAdmin extends ModelAdmin
 {
-
     private static array $managed_models = [
         BaseElement::class
     ];
@@ -63,7 +60,7 @@ class ElementModelAdmin extends ModelAdmin
         $form = parent::getEditForm($id, $fields);
         $gf = $form->Fields()->dataFieldByName($this->sanitiseClassName($this->modelClass));
         $dc = null;
-        if($gf instanceof GridField) {
+        if ($gf instanceof GridField) {
 
             // Apply the block type filter header, added in ElementSearchExtension
             $this->applyBlockTypeFilter($gf);
@@ -98,9 +95,9 @@ class ElementModelAdmin extends ModelAdmin
                 'Created.Nice' => _t('ElementalModelAdmin.CREATED', 'Created'),
                 'Summary' =>  _t('ElementalModelAdmin.SUMMARY', 'Summary')
             ];
-            if(class_exists(ElementVirtual::class)) {
+            if (class_exists(ElementVirtual::class)) {
                 // This field is provided by ElementVirtual component
-                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL','Global');
+                $display_fields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
             }
 
             $dc->setDisplayFields($display_fields);
@@ -114,17 +111,18 @@ class ElementModelAdmin extends ModelAdmin
      * @param $gf GridField with a filter header
      * @return void
      */
-    protected function applyBlockTypeFilter(GridField &$gf) {
+    protected function applyBlockTypeFilter(GridField &$gf)
+    {
         $gfConfig = $gf->getConfig();
         // add field with search context callback
-        $filterHeader = $gfConfig->getComponentByType( GridFieldFilterHeader::class );
+        $filterHeader = $gfConfig->getComponentByType(GridFieldFilterHeader::class);
         $searchContext = $filterHeader->getSearchContext($gf);
         $fields = $searchContext->getFields();
-        if($fields) {
+        if ($fields) {
             $sourceBlockTypes = ClassInfo::subclassesFor(BaseElement::class, false);
             $filterSource = [];
-            foreach($sourceBlockTypes as $className) {
-                $inst = Injector::inst()->get( $className );
+            foreach ($sourceBlockTypes as $className) {
+                $inst = Injector::inst()->get($className);
                 $filterSource[ $className  ] = $inst->getType();
             }
 

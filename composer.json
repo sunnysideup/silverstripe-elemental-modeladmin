@@ -1,37 +1,37 @@
 {
-    "name": "sunnysideup/silverstripe-elemental-modeladmin",
-    "description": "An administration module for elemental content blocks",
-    "type": "silverstripe-vendormodule",
-    "keywords": [
-        "silverstripe",
-        "nsw",
-        "elemental",
-        "modeladmin"
-    ],
-    "license": "BSD-3-Clause",
-    "authors": [
-        {
-            "name": "James",
-            "homepage": "https://dpc.nsw.gov.au",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "dnadesign/silverstripe-elemental": "^5 || ^6",
-        "symbiote/silverstripe-gridfieldextensions": "^4"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "friendsofphp/php-cs-fixer": "^3"
-    },
-    "autoload": {
-        "psr-4": {
-            "NSWDPC\\Elemental\\ModelAdmin\\": [
-                "src/"
-            ],
-            "NSWDPC\\Elemental\\ModelAdmin\\Tests\\": [
-                "tests/"
-            ]
-        }
+  "name": "sunnysideup/silverstripe-elemental-modeladmin",
+  "description": "An administration module for elemental content blocks",
+  "type": "silverstripe-vendormodule",
+  "keywords": [
+    "silverstripe",
+    "nsw",
+    "elemental",
+    "modeladmin"
+  ],
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "James",
+      "homepage": "https://dpc.nsw.gov.au",
+      "role": "Developer"
     }
+  ],
+  "require": {
+    "dnadesign/silverstripe-elemental": "^5 || ^6",
+    "symbiote/silverstripe-gridfieldextensions": "^4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "friendsofphp/php-cs-fixer": "^3"
+  },
+  "autoload": {
+    "psr-4": {
+      "NSWDPC\\Elemental\\ModelAdmin\\": [
+        "src/"
+      ],
+      "NSWDPC\\Elemental\\ModelAdmin\\Tests\\": [
+        "tests/"
+      ]
+    }
+  }
 }

@@ -31,7 +31,7 @@ class ElementalAreaOwnerExtension extends Extension
     {
         $title = '';
 
-        if ($ownerPage = $this->owner->getOwnerPage()) {
+        if ($ownerPage = $this->getOwner()->getOwnerPage()) {
             $title = $ownerPage->Title . ' (a ' . $ownerPage->i18n_singular_name() . ')';
         } else {
             // unknown owner, or maybe no longer exists

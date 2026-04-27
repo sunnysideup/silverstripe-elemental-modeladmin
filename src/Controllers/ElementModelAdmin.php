@@ -25,30 +25,22 @@ use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
 /**
  * An Elemental model administration area
+ * @author James
  */
 class ElementModelAdmin extends ModelAdmin
 {
-    /**
-     * @var array
-     */
-    private static $managed_models = [
-        BaseElement::class,
+    private static array $managed_models = [
+        BaseElement::class
     ];
 
-    /**
-     * @var array
-     */
-    private static $excluded_managed_models = [];
+    private static string $default_sort = "LastEdited DESC";
+
+    private static string $menu_title = 'Elements';
 
     /**
      * @var string
      */
-    private static $default_sort = 'LastEdited DESC';
-
-    /**
-     * @var string
-     */
-    private static $menu_title = 'Blocks';
+    private string static $menu_title = 'Blocks';
 
     /**
      * @var string

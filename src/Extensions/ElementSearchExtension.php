@@ -23,13 +23,16 @@ class ElementSearchExtension extends Extension
         if (isset($fields['Title'])) {
             $orderedFields['Title'] = $fields['Title'];
         }
+
         foreach ($fields as $k => $v) {
             if ($k === 'Title') {
                 continue;
             }
+
             if ($k === 'LastEdited') {
                 continue;
             }
+
             $orderedFields[$k] = $fields[$k];
         }
 
@@ -57,7 +60,8 @@ class ElementSearchExtension extends Extension
         } else {
             $areaTitle = _t('ElementalModelAdmin.MAIN_CONTENT_BLOCKS', 'Main content blocks');
         }
-        return '<strong>Page:</strong> <a href="' . $page->CMSEditLink() . '">' . trim(trim(($parent->OwnerTitleAndDescription())), '-') . '</a>' .
+
+        return '<strong>Page:</strong> <a href="' . $page->CMSEditLink() . '">' . trim(trim(((string) $parent->OwnerTitleAndDescription())), '-') . '</a>' .
             '<br />' .
             '<strong> ↳ ' . $areaTitle . ':</strong> ' . $this->SiblingList();
     }
@@ -72,7 +76,7 @@ class ElementSearchExtension extends Extension
             if ($sibling->ID === $owner->ID) {
                 $array[] = '<div style="padding-left: 2em;"><strong>&raquo; ' . $title . ' (this block) </strong></div>';
             } else {
-                $array[] = '<div style="padding-left: 2em;">- <a href="' . $sibling->CMSEditLink(true) . '">' . $title . '</a></div>';
+                $array[] = '<div style="padding-left: 2em;">- <a href="' . $sibling->getCMSEditLink(true) . '">' . $title . '</a></div>';
             }
         }
 
@@ -87,8 +91,8 @@ class ElementSearchExtension extends Extension
     {
         $owner = $this->getOwner();
         $curr = Controller::curr();
-        if (get_class($curr) !== ElementalAreaController::class) {
-            $id = 'nav-' . rand(0, 9999999);
+        if ($curr::class !== ElementalAreaController::class) {
+            $id = 'nav-' . random_int(0, 9999999);
             $fields->push(
                 LiteralField::create(
                     'MyPageTitle',

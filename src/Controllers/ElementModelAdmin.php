@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Controllers;
 
+use Override;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
@@ -53,9 +54,10 @@ class ElementModelAdmin extends ModelAdmin
      * Get the list of applicable elements, exclude ElementVirtual if available
      * @return DataList
      */
+    #[Override]
     public function getList()
     {
-        $sort = (string) $this->config()->get('default_sort') ?: static::$default_sort;
+        $sort = (string) $this->config()->get('default_sort') ?: self::$default_sort;
         $list = parent::getList();
         $list = $list->exclude(['ClassName:not' => $this->modelClass]);
         $list = $list->orderBy($sort);
@@ -67,6 +69,7 @@ class ElementModelAdmin extends ModelAdmin
         return $list;
     }
 
+    #[Override]
     public function getManagedModels()
     {
         $list = array_merge(
@@ -81,9 +84,11 @@ class ElementModelAdmin extends ModelAdmin
             if (in_array($values['dataClass'], $excluded)) {
                 $remove = true;
             }
+
             if (class_exists(ElementVirtual::class) && $values['dataClass'] === ElementVirtual::class) {
                 $remove = true;
             }
+
             // $obj = Injector::inst()->get($values['dataClass']);
             // if (! $obj->canCreate()) {
             //     $remove = true;
@@ -95,10 +100,12 @@ class ElementModelAdmin extends ModelAdmin
             } else {
                 $list[$key]['title'] .= ' (' . $count . ')';
             }
+
             if ($remove) {
                 unset($list[$key]);
                 continue;
             }
+
             $meaninglessWords = $this->config()->get('meaningless_words');
             $before = $list[$key]['title'];
             $list[$key]['title'] = trim(str_ireplace($meaninglessWords, '', $list[$key]['title']));
@@ -106,6 +113,7 @@ class ElementModelAdmin extends ModelAdmin
                 $list[$key]['title'] = $before;
             }
         }
+
         if (empty($list)) {
             $list = [
                 [
@@ -114,6 +122,7 @@ class ElementModelAdmin extends ModelAdmin
                 ],
             ];
         }
+
         return $list;
     }
 
@@ -121,6 +130,7 @@ class ElementModelAdmin extends ModelAdmin
      * Return the GridField form listing elements
      * @return Form
      */
+    #[Override]
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);
@@ -133,6 +143,7 @@ class ElementModelAdmin extends ModelAdmin
                 }
             }
         }
+
         if ($gf) {
 
             $paging = $gf->getConfig()->getComponentByType(GridFieldPaginator::class);
@@ -153,6 +164,7 @@ class ElementModelAdmin extends ModelAdmin
                     // This field is provided by ElementVirtual component
                     $displayFields['AvailableGlobally.Nice'] = _t('ElementalModelAdmin.GLOBAL', 'Global');
                 }
+
                 $dc->setDisplayFields($displayFields);
             }
 
@@ -169,6 +181,7 @@ class ElementModelAdmin extends ModelAdmin
             // Apply the block type filter header, added in ElementSearchExtension
             $this->applyBlockTypeFilter($gf);
         }
+
         return $form;
     }
 
@@ -191,6 +204,7 @@ class ElementModelAdmin extends ModelAdmin
                 $inst = Injector::inst()->get($className);
                 $filterSource[$className] = $inst->getType();
             }
+
             asort($filterSource);
             $fields->push(
                 DropdownField::create(

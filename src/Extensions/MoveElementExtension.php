@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Extensions;
 
+use SilverStripe\ORM\DataList;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementalArea;
 use Exception;
@@ -33,11 +34,11 @@ class MoveElementExtension extends Extension
     public function updateCMSFields(FieldList $fields)
     {
         // these fields are only exposed in the ModelAdmin
-        if (get_class(Controller::curr()) != ElementModelAdmin::class) {
+        if (Controller::curr()::class != ElementModelAdmin::class) {
             return;
         }
 
-        $areas = $this->owner->getApplicableElementalAreas(false);
+        $areas = $this->getOwner()->getApplicableElementalAreas(false);
         if (! $areas || count($areas) === 0) {
             return;
         }
@@ -54,20 +55,21 @@ class MoveElementExtension extends Extension
                 )
             );
 
-        $area = $this->owner->Parent();
+        $area = $this->getOwner()->Parent();
         if ($area instanceof ElementalArea) {
             $description = $area->OwnerTitleAndDescription();
             $field->setDescription(
                 _t(
                     'ElementalModelAdmin.CURRENT_AREA',
                     'Choose a record to move this block to.'
-                        . ' This block is currently associated with \'<em>{description}</em>\'',
+                        . " This block is currently associated with '<em>{description}</em>'",
                     [
                         'description' => htmlspecialchars($description),
                     ]
                 )
             );
         }
+
         // Add to start of Settings tab fields
         $fields->findorMakeTab('Root.Settings')->unshift($field);
     }
@@ -109,17 +111,19 @@ class MoveElementExtension extends Extension
                     if (! isset($allRelations[$class])) {
                         $allRelations[$class] = [];
                     }
+
                     $allRelations[$class][] = $relationName . 'ID';
                 }
             }
         }
+
         return $allRelations;
     }
 
     /**
      * Retrieve all applicable elemental areas
      * @param bool exclude_current if true, the current element's parent will be excluded from the returned list
-     * @return \SilverStripe\ORM\DataList|null
+     * @return DataList|null
      */
     public function getApplicableElementalAreas(?bool $excludeCurrent = true): array
     {
@@ -132,7 +136,7 @@ class MoveElementExtension extends Extension
             $list = $cache->get($cacheKey);
             try {
                 $list = unserialize($list);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Handle unserialization error
                 $list = null;
             }
@@ -143,9 +147,11 @@ class MoveElementExtension extends Extension
             // Store in cache with optional expiry (in seconds)
             $cache->set($cacheKey, serialize($list)); // Expires in 1 hour
         }
+
         if ($excludeCurrent) {
-            unset($value[$this->owner->ParentID]);
+            unset($value[$this->getOwner()->ParentID]);
         }
+
         if (empty($list)) {
             return [];
         }
@@ -160,7 +166,7 @@ class MoveElementExtension extends Extension
     {
 
         // get available classes
-        $relationColumns = $this->owner->getElementalAreaRelations();
+        $relationColumns = $this->getOwner()->getElementalAreaRelations();
         $ids = [];
         foreach ($relationColumns as $class => $fields) {
             $inst = Injector::inst()->get($class);
@@ -172,6 +178,7 @@ class MoveElementExtension extends Extension
             if (! $inst || ! ($inst instanceof DataObject)) {
                 continue;
             }
+
             foreach ($fields as $field) {
                 $myIds = $class::get()
                     ->columnUnique($field);
@@ -187,15 +194,17 @@ class MoveElementExtension extends Extension
         if ($ids !== []) {
             $list = ElementalArea::get()
                 ->filter(['ID' => $ids])
-                ->sort('LastEdited DESC');
+                ->sort(['LastEdited' => 'DESC']);
         } else {
             $list = null;
         }
+
         if ($list) {
             return $list
                 ->map('ID', 'OwnerTitleAndDescription')
                 ->toArray();
         }
+
         return [];
     }
 }

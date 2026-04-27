@@ -76,7 +76,7 @@ class ElementSearchExtension extends Extension
             if ($sibling->ID === $owner->ID) {
                 $array[] = '<div style="padding-left: 2em;"><strong>&raquo; ' . $title . ' (this block) </strong></div>';
             } else {
-                $array[] = '<div style="padding-left: 2em;">- <a href="' . $sibling->CMSEditLink(true) . '">' . $title . '</a></div>';
+                $array[] = '<div style="padding-left: 2em;">- <a href="' . $sibling->getCMSEditLink(true) . '">' . $title . '</a></div>';
             }
         }
 

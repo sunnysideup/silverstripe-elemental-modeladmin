@@ -2,6 +2,7 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Controllers;
 
+use Override;
 use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\ElementalVirtual\Model\ElementVirtual;
 use SilverStripe\Admin\ModelAdmin;
@@ -61,6 +62,7 @@ class ElementModelAdmin extends ModelAdmin
      * Get the list of applicable elements, exclude ElementVirtual if available
      * @return DataList
      */
+    #[Override]
     public function getList()
     {
         $sort = (string) $this->config()->get('default_sort') ?: self::$default_sort;
@@ -75,6 +77,7 @@ class ElementModelAdmin extends ModelAdmin
         return $list;
     }
 
+    #[Override]
     public function getManagedModels()
     {
         $list = array_merge(
@@ -135,6 +138,7 @@ class ElementModelAdmin extends ModelAdmin
      * Return the GridField form listing elements
      * @return Form
      */
+    #[Override]
     public function getEditForm($id = null, $fields = null)
     {
         $form = parent::getEditForm($id, $fields);

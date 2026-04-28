@@ -2,8 +2,8 @@
 
 namespace NSWDPC\Elemental\ModelAdmin\Tests;
 
+use Page;
 use SilverStripe\Dev\SapphireTest;
-use DNADesign\Elemental\Models\BaseElement;
 use DNADesign\Elemental\Models\ElementContent;
 use DNADesign\Elemental\Models\ElementalArea;
 
@@ -26,7 +26,7 @@ class MoveElementExtensionTest extends SapphireTest
         $sourceArea->OwnerClassName = 'Page';
         $sourceArea->write();
 
-        $sourcePage = \Page::create();
+        $sourcePage = Page::create();
         $sourcePage->Title = 'Source Page';
         $sourcePage->ElementalAreaID = $sourceArea->ID;
         $sourcePage->write();
@@ -35,7 +35,7 @@ class MoveElementExtensionTest extends SapphireTest
         $targetArea->OwnerClassName = 'Page';
         $targetArea->write();
 
-        $targetPage = \Page::create();
+        $targetPage = Page::create();
         $targetPage->Title = 'Target Page';
         $targetPage->ElementalAreaID = $targetArea->ID;
         $targetPage->write();

@@ -36,19 +36,18 @@ class ElementModelAdmin extends ModelAdmin
 
     private static string $default_sort = "LastEdited DESC";
 
-    private static string $menu_title = 'Elements';
 
     /**
      * @var string
      */
-    private string static $menu_title = 'Blocks';
+    private static string $menu_title = 'Blocks';
 
     /**
      * @var string
      */
-    private static $url_segment = 'blocks-admin';
+    private static string $url_segment = 'blocks-admin';
 
-    private static $meaningless_words = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+    private static array $meaningless_words = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
 
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available

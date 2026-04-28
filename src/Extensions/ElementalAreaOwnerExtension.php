@@ -40,13 +40,13 @@ class ElementalAreaOwnerExtension extends Extension
         }
 
         if ($ownerPage = $this->getOwner()->getOwnerPage()) {
-            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . " (#{$ownerPage->ID})";
+            $title = $ownerPage->i18n_singular_name() . " - " . $ownerPage->Title . sprintf(' (#%s)', $ownerPage->ID);
         } else {
             // unknown owner, or maybe no longer exists
             // TODO: maybe use OwnerClassName?
             $title = _t('elementadmin.UNKNOWN_OWNER', 'unknown parent record') . " (record #" . $this->getOwner()->ID . ")";
         }
 
-        return $title . " - {$areaTitle} - #{$this->getOwner()->ID}";
+        return $title . sprintf(' - %s - #%s', $areaTitle, $this->getOwner()->ID);
     }
 }

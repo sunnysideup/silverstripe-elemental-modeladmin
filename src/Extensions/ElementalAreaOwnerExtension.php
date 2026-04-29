@@ -27,7 +27,8 @@ class ElementalAreaOwnerExtension extends Extension
         return $this->getOwnerTitleAndDescription();
     }
 
-    public function getOwnerTitleAndDescription(): str    {
+    public function getOwnerTitleAndDescription(): string
+    {
         $title = '';
 
         // if the ElementalArea has a ContextTitle .. use that

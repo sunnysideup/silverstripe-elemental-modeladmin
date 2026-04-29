@@ -48,6 +48,7 @@ class ElementModelAdmin extends ModelAdmin
     private static string $url_segment = 'blocks-admin';
 
     private static array $meaningless_words = ['Columns', 'Column', 'Blocks', 'Block', 'Elemental', 'Element'];
+    private static array $excluded_managed_models = [];
 
     /**
      * Get the list of applicable elements, exclude ElementVirtual if available

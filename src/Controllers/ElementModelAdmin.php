@@ -23,6 +23,7 @@ use SilverStripe\Forms\GridField\GridFieldPrintButton;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
 /**
  * An Elemental model administration area
@@ -177,6 +178,9 @@ class ElementModelAdmin extends ModelAdmin
                     GridFieldExportButton::class,
                     GridFieldPrintButton::class,
                 ]);
+            if (class_exists(GridFieldSortableRows::class)) {
+                $gf->getConfig()->removeComponentsByType(GridFieldSortableRows::class);
+            }
 
             // Apply the block type filter header, added in ElementSearchExtension
             $this->applyBlockTypeFilter($gf);

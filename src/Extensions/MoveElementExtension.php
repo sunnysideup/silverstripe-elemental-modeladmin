@@ -34,7 +34,7 @@ class MoveElementExtension extends Extension
     public function updateCMSFields(FieldList $fields)
     {
         // these fields are only exposed in the ModelAdmin
-        if (Controller::curr()::class != ElementModelAdmin::class) {
+        if (! Controller::curr() instanceof ElementModelAdmin) {
             return;
         }
 

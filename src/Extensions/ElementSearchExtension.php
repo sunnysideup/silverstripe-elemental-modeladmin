@@ -91,7 +91,7 @@ class ElementSearchExtension extends Extension
     {
         $owner = $this->getOwner();
         $curr = Controller::curr();
-        if ($curr::class !== ElementalAreaController::class) {
+        if (! $curr instanceof ElementalAreaController) {
             $id = 'nav-' . random_int(0, 9999999);
             $fields->push(
                 LiteralField::create(
